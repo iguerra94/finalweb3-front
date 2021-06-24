@@ -1,4 +1,11 @@
-import { Box, Button, Grid, Paper, TextField } from '@material-ui/core'
+import {
+  Box,
+  Button,
+  CircularProgress,
+  Grid,
+  Paper,
+  TextField
+} from '@material-ui/core'
 import { useRef } from 'react'
 import useLoginForm from 'src/hooks/useLoginForm'
 import loginStyles from 'src/views/login/LoginStyles'
@@ -63,6 +70,7 @@ const Login: React.FC = () => {
                 color="primary"
                 className={classes.input}
               >
+                <CircularProgress size={20} color={'inherit'} />
                 Iniciar sesión
               </Button>
             </Grid>

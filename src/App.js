@@ -1,4 +1,3 @@
-import './App.css';
 import Login from 'src/views/login/Login'
 
 function App() {
