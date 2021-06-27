@@ -1,0 +1,16 @@
+# Build a JAR File
+#FROM maven:3.6.3-jdk-8-slim AS stage1
+#WORKDIR /home/app
+#COPY . /home/app/
+#RUN mvn -f /home/app/pom.xml clean package
+#RUN mvn spring-boot:run -Dspring-boot.run.profiles=mysql
+
+# Create an Image
+#FROM openjdk:8-jdk-alpine
+#EXPOSE 8080
+#COPY --from=stage1 /home/app/target/iw3.jar iw3.jar
+#ENTRYPOINT ["sh", "-c", "java -jar /iw3.jar"]
+
+FROM openjdk:8
+COPY ./iw3.jar iw3.jar
+CMD ["java","-jar","iw3.jar"]

@@ -13,8 +13,10 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RestController
@@ -26,18 +28,20 @@ public class OrdenRestController extends BaseRestController {
     @Autowired
     private IOrdenBusiness ordenBusiness;
 
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     @GetMapping(value = {""}, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<Orden>> list() {
+    public ResponseEntity list(HttpServletRequest request) {
         try {
             return new ResponseEntity<List<Orden>>(ordenBusiness.list(), HttpStatus.OK);
         } catch (BusinessException e) {
             log.error(e.getMessage(), e);
-            return new ResponseEntity<List<Orden>>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return new CustomResponseExceptionHandler().handleBusinessException(e, request);
         }
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(value = {""}, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> add(@RequestBody Orden orden) {
+    public ResponseEntity add(@RequestBody Orden orden, HttpServletRequest request) {
         try {
             ordenBusiness.save(orden);
             HttpHeaders responseHeaders = new HttpHeaders();
@@ -45,122 +49,139 @@ public class OrdenRestController extends BaseRestController {
             return new ResponseEntity<String>(responseHeaders, HttpStatus.CREATED);
         } catch (BusinessException e) {
             log.error(e.getMessage(), e);
-            return new ResponseEntity<String>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return new CustomResponseExceptionHandler().handleBusinessException(e, request);
         }
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping(value = {""}, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> update(@RequestBody Orden orden) {
+    public ResponseEntity update(@RequestBody Orden orden, HttpServletRequest request) {
         try {
             ordenBusiness.save(orden);
             return new ResponseEntity<String>(HttpStatus.OK);
         } catch (BusinessException e) {
             log.error(e.getMessage(), e);
-            return new ResponseEntity<String>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return new CustomResponseExceptionHandler().handleBusinessException(e, request);
         }
     }
 
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     @GetMapping(value = {"/{id}"}, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Orden> load(@PathVariable("id") Long id) {
+    public ResponseEntity load(@PathVariable("id") Long id, HttpServletRequest request) {
         try {
             return new ResponseEntity<Orden>(ordenBusiness.load(id), HttpStatus.OK);
+        } catch (NotFoundException e) {
+            return new CustomResponseExceptionHandler().handleNotFoundException(e, request);
         } catch (BusinessException e) {
             log.error(e.getMessage(), e);
-            return new ResponseEntity<Orden>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (NotFoundException e) {
-            return new ResponseEntity<Orden>(HttpStatus.NOT_FOUND);
+            return new CustomResponseExceptionHandler().handleBusinessException(e, request);
         }
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping(value = {"/{id}"}, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> delete(@PathVariable("id") Long id) {
+    public ResponseEntity delete(@PathVariable("id") Long id, HttpServletRequest request) {
         try {
             ordenBusiness.delete(id);
             return new ResponseEntity<String>(HttpStatus.OK);
+        } catch (NotFoundException e) {
+            return new CustomResponseExceptionHandler().handleNotFoundException(e, request);
         } catch (BusinessException e) {
             log.error(e.getMessage(), e);
-            return new ResponseEntity<String>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (NotFoundException e) {
-            return new ResponseEntity<String>(HttpStatus.NOT_FOUND);
+            return new CustomResponseExceptionHandler().handleBusinessException(e, request);
         }
     }
 
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     @PutMapping(value = "surtidor", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Orden> actualizarSurtidor(@RequestBody OrdenSurtidorDTO ordenSurtidorDTO) {
+    public ResponseEntity actualizarSurtidor(@RequestBody OrdenSurtidorDTO ordenSurtidorDTO, HttpServletRequest request) {
         Orden p = null;
         try {
             p = ordenBusiness.actualizarSurtidor(ordenSurtidorDTO);
             return new ResponseEntity<Orden>(p, HttpStatus.OK);
+        } catch (InvalidPasswordOrderException e) {
+            return new CustomResponseExceptionHandler().handleInvalidPasswordOrderException(e, request);
+        } catch (PresetLimitException e) {
+            return new CustomResponseExceptionHandler().handlePresetLimitException(e, request);
+        } catch (FullTankException e) {
+            return new CustomResponseExceptionHandler().handleFullTankException(e, request);
+        } catch (InvalidStateOrderException e) {
+            return new CustomResponseExceptionHandler().handleInvalidStateOrderException(e, request);
+        } catch (OutOfDateException e) {
+            return new CustomResponseExceptionHandler().handleOutOfDateException(e, request);
+        } catch (NotFoundException e) {
+            return new CustomResponseExceptionHandler().handleNotFoundException(e, request);
         } catch (BusinessException e) {
             log.error(e.getMessage(), e);
-            return new ResponseEntity<Orden>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (NotFoundException e) {
-            return new ResponseEntity<Orden>(HttpStatus.NOT_FOUND);
-        } catch (InvalidPasswordOrderException | PresetLimitException | FullTankException |
-                OutOfDateException | InvalidStateOrderException e) {
-            return new ResponseEntity<Orden>(HttpStatus.BAD_REQUEST);
+            return new CustomResponseExceptionHandler().handleBusinessException(e, request);
         }
     }
 
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     @PutMapping(value = "pesajeInicial", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Orden> actualizarPesajeInicial(@RequestBody PesajeDTO pesajeDTO) {
+    public ResponseEntity actualizarPesajeInicial(@RequestBody PesajeDTO pesajeDTO, HttpServletRequest request) {
         Orden p = null;
         try {
             p = ordenBusiness.actualizarPesajeInicial(pesajeDTO);
             return new ResponseEntity<Orden>(p, HttpStatus.OK);
+        } catch (InvalidStateOrderException e) {
+            return new CustomResponseExceptionHandler().handleInvalidStateOrderException(e, request);
+        } catch (OutOfDateException e) {
+            return new CustomResponseExceptionHandler().handleOutOfDateException(e, request);
+        } catch (NotFoundException e) {
+            return new CustomResponseExceptionHandler().handleNotFoundException(e, request);
         } catch (BusinessException e) {
             log.error(e.getMessage(), e);
-            return new ResponseEntity<Orden>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (NotFoundException e) {
-            return new ResponseEntity<Orden>(HttpStatus.NOT_FOUND);
-        } catch (InvalidStateOrderException | OutOfDateException e) {
-            return new ResponseEntity<Orden>(HttpStatus.BAD_REQUEST);
+            return new CustomResponseExceptionHandler().handleBusinessException(e, request);
         }
     }
 
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     @PutMapping(value = "cerrarOrden", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Orden> cerrarOrden(@RequestBody OrdenSurtidorDTO orden) {
+    public ResponseEntity cerrarOrden(@RequestBody OrdenSurtidorDTO orden, HttpServletRequest request) {
         Orden p = null;
         try {
             p = ordenBusiness.cerrarOrdenPorNumeroOrden(orden);
             return new ResponseEntity<Orden>(p, HttpStatus.OK);
+        } catch (InvalidStateOrderException e) {
+            return new CustomResponseExceptionHandler().handleInvalidStateOrderException(e, request);
+        } catch (NotFoundException e) {
+            return new CustomResponseExceptionHandler().handleNotFoundException(e, request);
         } catch (BusinessException e) {
             log.error(e.getMessage(), e);
-            return new ResponseEntity<Orden>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (NotFoundException e) {
-            return new ResponseEntity<Orden>(HttpStatus.NOT_FOUND);
-        } catch (InvalidStateOrderException e) {
-            return new ResponseEntity<Orden>(HttpStatus.BAD_REQUEST);
+            return new CustomResponseExceptionHandler().handleBusinessException(e, request);
         }
     }
 
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     @PutMapping(value = "pesajeFinal", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Orden> actualizarPesajeFinal(@RequestBody PesajeDTO pesajeDTO) {
+    public ResponseEntity actualizarPesajeFinal(@RequestBody PesajeDTO pesajeDTO, HttpServletRequest request) {
         Orden p = null;
         try {
             p = ordenBusiness.actualizarPesajeFinal(pesajeDTO);
             return new ResponseEntity<Orden>(p, HttpStatus.OK);
+        } catch (InvalidStateOrderException e) {
+            return new CustomResponseExceptionHandler().handleInvalidStateOrderException(e, request);
+        } catch (NotFoundException e) {
+            return new CustomResponseExceptionHandler().handleNotFoundException(e, request);
         } catch (BusinessException e) {
             log.error(e.getMessage(), e);
-            return new ResponseEntity<Orden>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (NotFoundException e) {
-            return new ResponseEntity<Orden>(HttpStatus.NOT_FOUND);
-        } catch (InvalidStateOrderException e) {
-            return new ResponseEntity<Orden>(HttpStatus.BAD_REQUEST);
+            return new CustomResponseExceptionHandler().handleBusinessException(e, request);
         }
     }
 
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     @PutMapping(value = "mail", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Orden> actualizacionEnvioMail(@RequestBody ActualizacionMailDTO actualizacionMailDTO) {
+    public ResponseEntity actualizacionEnvioMail(@RequestBody ActualizacionMailDTO actualizacionMailDTO, HttpServletRequest request) {
         Orden p = null;
         try {
             p = ordenBusiness.actualizacionEnvioMail(actualizacionMailDTO);
             return new ResponseEntity<Orden>(p, HttpStatus.OK);
+        } catch (NotFoundException e) {
+            return new CustomResponseExceptionHandler().handleNotFoundException(e, request);
         } catch (BusinessException e) {
             log.error(e.getMessage(), e);
-            return new ResponseEntity<Orden>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (NotFoundException e) {
-            return new ResponseEntity<Orden>(HttpStatus.NOT_FOUND);
+            return new CustomResponseExceptionHandler().handleBusinessException(e, request);
         }
     }
 }

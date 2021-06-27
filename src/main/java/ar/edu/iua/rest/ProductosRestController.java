@@ -11,8 +11,10 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RestController
@@ -24,18 +26,20 @@ public class ProductosRestController extends BaseRestController {
     @Autowired
     private IProductoBusiness productoBusiness;
 
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     @GetMapping(value = {""}, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<Producto>> list() {
+    public ResponseEntity list(HttpServletRequest request) {
         try {
             return new ResponseEntity<List<Producto>>(productoBusiness.list(), HttpStatus.OK);
         } catch (BusinessException e) {
             log.error(e.getMessage(), e);
-            return new ResponseEntity<List<Producto>>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return new CustomResponseExceptionHandler().handleBusinessException(e, request);
         }
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(value = {""}, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> add(@RequestBody Producto producto) {
+    public ResponseEntity add(@RequestBody Producto producto, HttpServletRequest request) {
         try {
             productoBusiness.save(producto);
             HttpHeaders responseHeaders = new HttpHeaders();
@@ -43,43 +47,47 @@ public class ProductosRestController extends BaseRestController {
             return new ResponseEntity<String>(responseHeaders, HttpStatus.CREATED);
         } catch (BusinessException e) {
             log.error(e.getMessage(), e);
-            return new ResponseEntity<String>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return new CustomResponseExceptionHandler().handleBusinessException(e, request);
         }
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping(value = {""}, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> update(@RequestBody Producto producto) {
+    public ResponseEntity update(@RequestBody Producto producto, HttpServletRequest request) {
         try {
             productoBusiness.save(producto);
             return new ResponseEntity<String>(HttpStatus.OK);
         } catch (BusinessException e) {
             log.error(e.getMessage(), e);
-            return new ResponseEntity<String>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return new CustomResponseExceptionHandler().handleBusinessException(e, request);
         }
     }
 
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     @GetMapping(value = {"/{id}"}, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Producto> load(@PathVariable("id") Long id) {
+    public ResponseEntity load(@PathVariable("id") Long id, HttpServletRequest request) {
         try {
             return new ResponseEntity<Producto>(productoBusiness.load(id), HttpStatus.OK);
+        } catch (NotFoundException e) {
+            return new CustomResponseExceptionHandler().handleNotFoundException(e, request);
         } catch (BusinessException e) {
             log.error(e.getMessage(), e);
-            return new ResponseEntity<Producto>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (NotFoundException e) {
-            return new ResponseEntity<Producto>(HttpStatus.NOT_FOUND);
+            return new CustomResponseExceptionHandler().handleBusinessException(e, request);
         }
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping(value = {"/{id}"}, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> delete(@PathVariable("id") Long id) {
+    public ResponseEntity delete(@PathVariable("id") Long id, HttpServletRequest request) {
         try {
             productoBusiness.delete(id);
             return new ResponseEntity<String>(HttpStatus.OK);
+        } catch (NotFoundException e) {
+            return new CustomResponseExceptionHandler().handleNotFoundException(e, request);
         } catch (BusinessException e) {
             log.error(e.getMessage(), e);
-            return new ResponseEntity<String>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (NotFoundException e) {
-            return new ResponseEntity<String>(HttpStatus.NOT_FOUND);
+            return new CustomResponseExceptionHandler().handleBusinessException(e, request);
         }
     }
 }
+
