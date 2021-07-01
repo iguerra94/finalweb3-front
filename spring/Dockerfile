@@ -12,5 +12,5 @@
 #ENTRYPOINT ["sh", "-c", "java -jar /iw3.jar"]
 
 FROM openjdk:8
-COPY ./iw3.jar iw3.jar
-CMD ["java","-jar","iw3.jar"]
+ADD target/iw3.jar iw3.jar
+ENTRYPOINT ["java", "-jar" , "iw3.jar"]

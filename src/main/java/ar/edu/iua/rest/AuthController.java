@@ -3,7 +3,7 @@ package ar.edu.iua.rest;
 import ar.edu.iua.business.IAuthBusiness;
 import ar.edu.iua.business.exception.InvalidCredentialsException;
 import ar.edu.iua.business.exception.InvalidLoginUserException;
-import ar.edu.iua.model.LoginUser;
+import ar.edu.iua.model.DTO.LoginUserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,9 +21,9 @@ public class AuthController {
     private IAuthBusiness authBusiness;
 
     @RequestMapping(value = "", method = RequestMethod.POST)
-    public ResponseEntity login(@RequestBody LoginUser loginUser, HttpServletRequest request) {
+    public ResponseEntity login(@RequestBody LoginUserDTO loginUserDTO, HttpServletRequest request) {
         try {
-            return ResponseEntity.ok(authBusiness.login(loginUser));
+            return ResponseEntity.ok(authBusiness.login(loginUserDTO));
         } catch (InvalidLoginUserException e) {
             return new CustomResponseExceptionHandler().handleInvalidLoginUserException(e, request);
         } catch (InvalidCredentialsException e) {

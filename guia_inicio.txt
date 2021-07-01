@@ -1,0 +1,11 @@
+1) Copiar archivos en la carpeta raiz del proyecto
+2) Correr el contenido del archivo startup_script.txt en la carpeta raiz del proyecto
+3) Ingresar a contenedor dentro de mysql y cargar usuarios y roles
+4) consumir api desde localhost:8081
+5) Para loguearse, utilizar el endpoint /api/v1/login:
+  5.1) body {
+            "usuario": "",
+            "password": ""
+         }
+6) Para consumir endpoints: colocar header Authorization:
+  6.1) Authorization: Bearer {{token}}

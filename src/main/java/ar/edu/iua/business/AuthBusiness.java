@@ -4,7 +4,7 @@ import ar.edu.iua.business.exception.InvalidCredentialsException;
 import ar.edu.iua.business.exception.InvalidLoginUserException;
 import ar.edu.iua.config.TokenProvider;
 import ar.edu.iua.model.AuthToken;
-import ar.edu.iua.model.LoginUser;
+import ar.edu.iua.model.DTO.LoginUserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -27,18 +27,18 @@ public class AuthBusiness implements IAuthBusiness {
     private TokenProvider jwtTokenUtil;
 
     @Override
-    public AuthToken login(LoginUser loginUser) throws InvalidLoginUserException, InvalidCredentialsException {
+    public AuthToken login(LoginUserDTO loginUserDTO) throws InvalidLoginUserException, InvalidCredentialsException {
         try {
-            if (loginUser.getUsername().length() == 0 || loginUser.getPassword().length() == 0) {
+            if (loginUserDTO.getUsername().length() == 0 || loginUserDTO.getPassword().length() == 0) {
                 throw new InvalidLoginUserException("Usuario y contraseña requeridos.");
             }
 
-            UserDetails userDetails = userDetailsService.loadUserByUsername(loginUser.getUsername());
+            UserDetails userDetails = userDetailsService.loadUserByUsername(loginUserDTO.getUsername());
 
             final Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
-                            loginUser.getUsername(),
-                            loginUser.getPassword()
+                            loginUserDTO.getUsername(),
+                            loginUserDTO.getPassword()
                     )
             );
             SecurityContextHolder.getContext().setAuthentication(authentication);
