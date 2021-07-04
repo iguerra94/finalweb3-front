@@ -1,5 +1,5 @@
 interface LoginData {
-  email?: string
+  username?: string
   password?: ArrayBuffer
 }
 

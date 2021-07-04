@@ -7,6 +7,7 @@ import {
   TextField
 } from '@material-ui/core'
 import { useRef } from 'react'
+import { useAuth } from 'src/context/AuthContext'
 import useLoginForm from 'src/hooks/useLoginForm'
 import loginStyles from 'src/views/login/LoginStyles'
 
@@ -17,10 +18,15 @@ const Login: React.FC = () => {
   const {
     loginData,
     errors,
-    handleEmailChange,
+    isSubmitting,
+    handleUsernameChange,
     handlePasswordChange,
-    handleSubmit
+    handleClick
   } = useLoginForm(passwordInputRef)
+
+  const {
+    state: { loginError }
+  } = useAuth()
 
   return (
     <Box className={classes.root}>
@@ -37,17 +43,22 @@ const Login: React.FC = () => {
         <Box component="h3" className={classes.loginBoxTitle}>
           Inicia sesión en tu cuenta
         </Box>
-        <form className={classes.form} onSubmit={handleSubmit}>
+        <form
+          className={classes.form}
+          onSubmit={(e) => {
+            e.preventDefault()
+          }}
+        >
           <Grid container spacing={2} className={classes.loginBoxContent}>
             <Grid item className={classes.item}>
               <TextField
-                label="Correo"
+                label="Usuario"
                 variant="outlined"
                 className={classes.input}
-                value={loginData.email}
-                onChange={handleEmailChange}
-                error={errors.email !== undefined}
-                helperText={errors.email}
+                value={loginData.username}
+                onChange={handleUsernameChange}
+                error={errors.username !== undefined}
+                helperText={errors.username}
               />
             </Grid>
             <Grid item className={classes.item}>
@@ -64,17 +75,26 @@ const Login: React.FC = () => {
             </Grid>
             <Grid item className={classes.item}>
               <Button
-                type="submit"
                 size="large"
                 variant="contained"
                 color="primary"
-                className={classes.input}
+                // className={classes.button}
+                fullWidth={true}
+                disabled={isSubmitting}
+                onClick={handleClick}
               >
-                <CircularProgress size={20} color={'inherit'} />
+                {isSubmitting ? (
+                  <CircularProgress size={14} className={classes.progress} />
+                ) : null}
                 Iniciar sesión
               </Button>
             </Grid>
           </Grid>
+          {loginError ? (
+            <Box className={`${classes['response']} ${classes['failure']}`}>
+              {loginError}
+            </Box>
+          ) : null}
         </form>
       </Paper>
     </Box>

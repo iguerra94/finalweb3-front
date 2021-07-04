@@ -15,3 +15,8 @@ body {
 .MuiFormHelperText-contained {
   margin: 0 !important;
 }
+
+.App {
+  width: 100vw;
+  height: 100vh;
+}
