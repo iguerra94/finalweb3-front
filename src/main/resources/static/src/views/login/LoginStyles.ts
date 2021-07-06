@@ -1,5 +1,5 @@
-import { makeStyles, Theme } from "@material-ui/core"
-import { createStyles } from "@material-ui/styles"
+import { makeStyles, Theme } from '@material-ui/core'
+import { createStyles } from '@material-ui/styles'
 
 const loginStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -30,7 +30,9 @@ const loginStyles = makeStyles((theme: Theme) =>
       display: 'flex',
       flexDirection: 'column',
       minWidth: '400px',
+      maxWidth: '400px',
       minHeight: '400px',
+      maxHeight: '400px',
       zIndex: 2
     },
     loginBoxTitle: {
@@ -57,7 +59,23 @@ const loginStyles = makeStyles((theme: Theme) =>
     },
     input: {
       width: '100%'
-    }
+    },
+    button: {
+      position: 'relative',
+      width: '100%'
+    },
+    progress: {
+      position: 'absolute'
+    },
+    response: {
+      width: '300px',
+      whiteSpace: 'nowrap',
+      overflow: 'hidden',
+      textOverflow: 'ellipsis',
+      position: 'relative',
+      bottom: '-12px'
+    },
+    failure: { color: '#e53935' }
   })
 )
 

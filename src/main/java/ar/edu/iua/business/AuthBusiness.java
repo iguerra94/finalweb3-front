@@ -49,7 +49,7 @@ public class AuthBusiness implements IAuthBusiness {
         } catch (InvalidLoginUserException e) {
             throw new InvalidLoginUserException(e.getMessage());
         } catch (Exception e) {
-            throw new InvalidCredentialsException(e.getMessage());
+            throw new InvalidCredentialsException("Usuario o contraseña incorrectos.");
         }
     }
 

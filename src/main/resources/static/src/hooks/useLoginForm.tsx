@@ -1,36 +1,53 @@
 import { useEffect, useState } from 'react'
+import { ActionType } from 'src/config/reducer/actions'
+import { useAuth } from 'src/context/AuthContext'
 import LoginData from 'src/model/dto/LoginData'
 import LoginDataError from 'src/model/dto/LoginDataError'
-import loginService from 'src/service/loginService'
+import authService from 'src/service/authService'
+import { TIMEOUT_500_MS } from 'src/utils/config-utils'
 import { digestMessage } from 'src/utils/function-utils'
+import useLocalStorage, { LS_KEYS } from './useLocalStorage'
 
 const useLoginForm = (passwordInputRef: React.RefObject<any>) => {
   const [loginData, setLoginData] = useState<LoginData>({
-    email: '',
+    username: '',
     password: undefined
   })
   const [errors, setErrors] = useState<LoginDataError>({
-    email: undefined,
+    username: undefined,
     password: undefined
   })
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
+  const [, setToken] = useLocalStorage(LS_KEYS.AUTH_TOKEN, '')
+  const {
+    state: { loginError },
+    dispatch
+  } = useAuth()
 
-  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setLoginData({ ...loginData, email: e.target.value })
+  const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setLoginData({ ...loginData, username: e.target.value })
 
-    if (Object.keys(errors).length > 0)
-      setErrors({ email: undefined, password: undefined })
+    removeErrors()
   }
 
   const handlePasswordChange = () => {
-    if (Object.keys(errors).length > 0)
-      setErrors({ email: undefined, password: undefined })
+    removeErrors()
   }
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
+  const removeErrors = () => {
+    if (Object.keys(errors).length > 0)
+      setErrors({ username: undefined, password: undefined })
 
-    setErrors(loginService.validateLoginDataValues(loginData, passwordInputRef))
+    if (loginError)
+      dispatch({
+        type: ActionType.HideLoginError
+      })
+  }
+
+  const handleClick = () => {
+    console.log('HOLA')
+
+    setErrors(authService.validateLoginDataValues(loginData, passwordInputRef))
     setIsSubmitting(true)
   }
 
@@ -38,7 +55,29 @@ const useLoginForm = (passwordInputRef: React.RefObject<any>) => {
     if (Object.keys(errors).length === 0 && isSubmitting) {
       digestMessage(passwordInputRef.current?.value).then((value) => {
         setLoginData({ ...loginData, password: value })
-        setIsSubmitting(false)
+
+        authService
+          .login({
+            username: loginData.username,
+            password: passwordInputRef.current?.value
+          })
+          .then((res) => {
+            setToken(res.data.token)
+
+            setTimeout(() => {
+              window.location.reload()
+              setIsSubmitting(false)
+            }, TIMEOUT_500_MS)
+          })
+          .catch((err) => {
+            setTimeout(() => {
+              dispatch({
+                type: ActionType.ShowLoginError,
+                payload: err.response.data.message
+              })
+              setIsSubmitting(false)
+            }, TIMEOUT_500_MS)
+          })
       })
     } else {
       setIsSubmitting(false)
@@ -48,9 +87,10 @@ const useLoginForm = (passwordInputRef: React.RefObject<any>) => {
   return {
     loginData,
     errors,
-    handleEmailChange,
+    isSubmitting,
+    handleUsernameChange,
     handlePasswordChange,
-    handleSubmit
+    handleClick
   }
 }
 
