@@ -1,7 +1,7 @@
 import { makeStyles } from '@material-ui/core'
 import { createStyles } from '@material-ui/styles'
 
-const styles = makeStyles(() =>
+const useStyles = makeStyles(() =>
   createStyles({
     container: {
       display: 'flex',
@@ -12,4 +12,4 @@ const styles = makeStyles(() =>
   })
 )
 
-export default styles
+export default useStyles

@@ -6,12 +6,12 @@ import {
   Route,
   Switch
 } from 'react-router-dom'
-import Loading from 'src/components/Loading'
-import { useAuth } from 'src/context/AuthContext'
+import Loading from 'src/components/loading/Loading'
+import { useAuth } from 'src/context/auth/AuthContext'
 import userService from 'src/service/userService'
 import { TIMEOUT_500_MS } from 'src/utils/config-utils'
 import MainWrapper from 'src/views/main-wrapper/MainWrapper'
-import { ActionType } from '../reducer/actions'
+import { ActionType } from '../../context/auth/reducer/auth-actions'
 import LoggedUserRouter from './LoggedUserRouter'
 import PublicRoute from './PublicRoute'
 import { CustomPrivateRouteProps, ROUTES } from './routes'

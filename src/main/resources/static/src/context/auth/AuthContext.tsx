@@ -1,7 +1,10 @@
 import { createContext, useContext, useReducer } from 'react'
-import { authReducer } from 'src/config/reducer'
-import { AuthActions } from 'src/config/reducer/actions'
-import { AuthState, initialAuthState } from 'src/config/reducer/state'
+import { authReducer } from 'src/context/auth/reducer'
+import { AuthActions } from 'src/context/auth/reducer/auth-actions'
+import {
+  AuthState,
+  initialAuthState
+} from 'src/context/auth/reducer/auth-state'
 
 type AuthContextType = {
   state: AuthState

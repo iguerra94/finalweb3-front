@@ -1,65 +1,24 @@
-import { Box, Button } from '@material-ui/core'
-import { useAuth } from 'src/context/AuthContext'
-import { useHistory } from 'react-router-dom'
-import { ROUTES } from 'src/config/router/routes'
+import CustomModal from 'src/components/custom-modal/CustomModal'
+import MainDrawer from 'src/components/main-drawer/MainDrawer'
+import { useAuth } from 'src/context/auth/AuthContext'
+import { useUI } from 'src/context/ui/UIContext'
 
 const MainWrapper: React.FC = ({ children }) => {
   const {
     state: { userIsLogged }
   } = useAuth()
 
-  const history = useHistory()
+  const {
+    state: { modalData }
+  } = useUI()
 
   return (
     <>
-      {userIsLogged && (
-        <Box>
-          <Button
-            type="submit"
-            size="large"
-            variant="contained"
-            color="primary"
-            onClick={() => {
-              history.replace(ROUTES.PrivateRoutes.NewOrder.pathUrl())
-            }}
-          >
-            Nueva orden
-          </Button>
-          <Button
-            type="submit"
-            size="large"
-            variant="contained"
-            color="primary"
-            onClick={() => {
-              history.replace(ROUTES.PrivateRoutes.OrderList.pathUrl())
-            }}
-          >
-            Lista de ordenes
-          </Button>
-          <Button
-            type="submit"
-            size="large"
-            variant="contained"
-            color="primary"
-            onClick={() => {
-              history.replace(ROUTES.PrivateRoutes.OrderDetail.pathUrl('123'))
-            }}
-          >
-            Detalle de orden
-          </Button>
-          <Button
-            type="submit"
-            size="large"
-            variant="contained"
-            color="primary"
-            onClick={() => {
-              history.replace(ROUTES.Login.pathUrl)
-            }}
-          >
-            Login
-          </Button>
-        </Box>
-      )}
+      {/* MainDrawer */}
+      {userIsLogged ? <MainDrawer /> : null}
+
+      {/* CustomModal */}
+      {modalData.modalOpen ? <CustomModal /> : null}
 
       {/* Logged User router */}
       {children}

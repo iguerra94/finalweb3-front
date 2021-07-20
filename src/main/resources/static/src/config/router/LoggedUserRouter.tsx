@@ -3,12 +3,12 @@ import { Suspense } from 'react'
 import { Switch } from 'react-router-dom'
 import { CustomPrivateRouteProps, ROUTES } from './routes'
 
-import Loading from 'src/components/Loading'
+import Loading from 'src/components/loading/Loading'
 import PrivateRoute from './PrivateRoute'
 import { HTTP_STATUS_CODE } from 'src/api/http-status-codes'
-import { useAuth } from 'src/context/AuthContext'
+import { useAuth } from 'src/context/auth/AuthContext'
 import useLocalStorage, { LS_KEYS } from 'src/hooks/useLocalStorage'
-import { ActionType } from '../reducer/actions'
+import { ActionType } from '../../context/auth/reducer/auth-actions'
 
 import Axios from 'axios'
 

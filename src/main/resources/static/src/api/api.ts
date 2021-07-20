@@ -4,6 +4,9 @@ import { LS_KEYS } from 'src/hooks/useLocalStorage'
 import auth from './auth'
 import { API_URL_LOGIN } from './auth/routes'
 import user from './user'
+import truck from './truck'
+import product from './product'
+import order from './order'
 
 // Setup request interceptor
 Axios.interceptors.request.use(
@@ -24,7 +27,10 @@ Axios.interceptors.request.use(
 
 const api = {
   auth,
-  user
+  user,
+  truck,
+  product,
+  order
 }
 
 export default api

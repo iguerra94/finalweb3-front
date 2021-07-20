@@ -10,7 +10,7 @@ use testw3;
 /* Alta de usuarios */
 
 /* Usuario admin */
-INSERT INTO user (id, username, password, name, last_name) VALUES (1, 'admin', '$2a$04$q26uBnOAogs665diBqMWgepW/GfJeb3fV4TRGInmRnY5/pt3hIh6e', 'Admin', 'Admin');
+INSERT INTO user (id, username, password, name, last_name) VALUES (1, 'admin', '$2y$04$5eAy2xmYE7BlCEkxJc2LM.gAoSYqKUhoUG7Z8sXpGA6vewb/zeg7W', 'Admin', 'Admin');
 
 /* Usuarios normales */
 /* Password: password */
