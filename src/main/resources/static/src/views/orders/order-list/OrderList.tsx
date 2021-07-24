@@ -1,6 +1,6 @@
 import { Box, Button } from '@material-ui/core'
-import { ActionType } from 'src/config/reducer/actions'
-import { useAuth } from 'src/context/AuthContext'
+import { ActionType } from 'src/context/auth/reducer/auth-actions'
+import { useAuth } from 'src/context/auth/AuthContext'
 import useLocalStorage, { LS_KEYS } from 'src/hooks/useLocalStorage'
 import { TIMEOUT_500_MS } from 'src/utils/config-utils'
 

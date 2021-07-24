@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
-import { ActionType } from 'src/config/reducer/actions'
-import { useAuth } from 'src/context/AuthContext'
+import { ActionType } from 'src/context/auth/reducer/auth-actions'
+import { useAuth } from 'src/context/auth/AuthContext'
 import LoginData from 'src/model/dto/LoginData'
 import LoginDataError from 'src/model/dto/LoginDataError'
 import authService from 'src/service/authService'
@@ -44,9 +44,8 @@ const useLoginForm = (passwordInputRef: React.RefObject<any>) => {
       })
   }
 
-  const handleClick = () => {
-    console.log('HOLA')
-
+  // const handleClick = () => {
+  const handleSubmit = () => {
     setErrors(authService.validateLoginDataValues(loginData, passwordInputRef))
     setIsSubmitting(true)
   }
@@ -90,7 +89,8 @@ const useLoginForm = (passwordInputRef: React.RefObject<any>) => {
     isSubmitting,
     handleUsernameChange,
     handlePasswordChange,
-    handleClick
+    // handleClick,
+    handleSubmit
   }
 }
 

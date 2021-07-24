@@ -1,12 +1,18 @@
 import AppRouter from './config/router/router'
-import { AuthContextProvider } from './context/AuthContext'
+import { UIContextProvider } from './context/ui/UIContext'
+import { AuthContextProvider } from './context/auth/AuthContext'
+import { NewOrderContextProvider } from 'src/context/new-order/NewOrderContext'
 
 function App() {
   return (
     <div className="App">
-      <AuthContextProvider>
-        <AppRouter />
-      </AuthContextProvider>
+      <UIContextProvider>
+        <AuthContextProvider>
+          <NewOrderContextProvider>
+            <AppRouter />
+          </NewOrderContextProvider>
+        </AuthContextProvider>
+      </UIContextProvider>
     </div>
   )
 }

@@ -7,7 +7,7 @@ import {
   TextField
 } from '@material-ui/core'
 import { useRef } from 'react'
-import { useAuth } from 'src/context/AuthContext'
+import { useAuth } from 'src/context/auth/AuthContext'
 import useLoginForm from 'src/hooks/useLoginForm'
 import loginStyles from 'src/views/login/LoginStyles'
 
@@ -21,7 +21,8 @@ const Login: React.FC = () => {
     isSubmitting,
     handleUsernameChange,
     handlePasswordChange,
-    handleClick
+    // handleClick
+    handleSubmit
   } = useLoginForm(passwordInputRef)
 
   const {
@@ -47,6 +48,7 @@ const Login: React.FC = () => {
           className={classes.form}
           onSubmit={(e) => {
             e.preventDefault()
+            handleSubmit()
           }}
         >
           <Grid container spacing={2} className={classes.loginBoxContent}>
@@ -75,13 +77,14 @@ const Login: React.FC = () => {
             </Grid>
             <Grid item className={classes.item}>
               <Button
+                type="submit"
                 size="large"
                 variant="contained"
                 color="primary"
                 // className={classes.button}
                 fullWidth={true}
                 disabled={isSubmitting}
-                onClick={handleClick}
+                // onClick={handleClick}
               >
                 {isSubmitting ? (
                   <CircularProgress size={14} className={classes.progress} />
