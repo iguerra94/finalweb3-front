@@ -58,9 +58,9 @@ const MainDrawer = () => {
             item.shouldRender ? (
               <ListItem
                 key={item.text}
-                selected={history.location.pathname === item.pathUrl}
+                selected={history.location.pathname.includes(item.pathUrl)}
                 className={
-                  history.location.pathname === item.pathUrl
+                  history.location.pathname.includes(item.pathUrl)
                     ? classes.selected
                     : classes.normal
                 }

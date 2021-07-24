@@ -1,31 +1,38 @@
 import Snackbar from '@material-ui/core/Snackbar'
 import { useUI } from 'src/context/ui/UIContext'
 import MuiAlert, { AlertProps } from '@material-ui/lab/Alert'
-import Slide from '@material-ui/core/Slide'
-import { TransitionProps } from '@material-ui/core/transitions'
+import { makeStyles, Theme } from '@material-ui/core/styles'
 
 function Alert(props: AlertProps) {
   return <MuiAlert elevation={6} variant="filled" {...props} />
 }
 
-function SlideTransition(props: TransitionProps) {
-  return <Slide {...props} direction="up" />
-}
+const useStyles = makeStyles((theme: Theme) => ({
+  root: {
+    position: 'absolute',
+    bottom: '2rem',
+    right: '2rem',
+    zIndex: 2,
+    width: 'auto',
+    cursor: 'default'
+  }
+}))
 
 const CustomSnackbar: React.FC = () => {
+  const classes = useStyles()
   const {
     state: { snackbarData }
   } = useUI()
 
   return (
-    <Snackbar
-      open={snackbarData.snackbarOpen}
-      anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-      TransitionComponent={SlideTransition}
-      key={'bottom-right'}
-    >
-      <Alert severity={snackbarData.severity}>{snackbarData.message}</Alert>
-    </Snackbar>
+    <div className={classes.root}>
+      <Snackbar
+        open={snackbarData.snackbarOpen}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+      >
+        <Alert severity={snackbarData.severity}>{snackbarData.message}</Alert>
+      </Snackbar>
+    </div>
   )
 }
 

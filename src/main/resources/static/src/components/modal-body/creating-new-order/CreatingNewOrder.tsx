@@ -5,14 +5,15 @@ import useStyles from './CreatingNewOrderStyles'
 import Loading from 'src/components/loading/Loading'
 import { useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
-import { useNewOrder } from 'src/context/new-order/NewOrderContext'
-import { ActionType } from 'src/context/ui/reducer/ui-actions'
 import { useUI } from 'src/context/ui/UIContext'
+import { ActionType } from 'src/context/ui/reducer/ui-actions'
+import { useNewOrder } from 'src/context/new-order/NewOrderContext'
+import { ActionType as NewOrderActionType } from 'src/context/new-order/reducer/new-order-actions'
 import { ROUTES } from 'src/config/router/routes'
 import orderService from 'src/service/orderService'
 
 const CreatingNewOrder = () => {
-  const { state } = useNewOrder()
+  const { dispatch: dispatchNewOrder, state } = useNewOrder()
   const { dispatch } = useUI()
 
   const classes = useStyles()
@@ -20,7 +21,9 @@ const CreatingNewOrder = () => {
   const history = useHistory()
 
   useEffect(() => {
-    createOrder()
+    setTimeout(() => {
+      createOrder()
+    }, 2000)
   }, [])
 
   const createOrder = async () => {
@@ -59,21 +62,59 @@ const CreatingNewOrder = () => {
       history.replace(ROUTES.PrivateRoutes.OrderList.pathUrl())
 
       dispatch({ type: ActionType.CloseModal })
+      dispatchNewOrder({ type: NewOrderActionType.ClearNewOrderData })
 
-      dispatch({
-        type: ActionType.OpenSnackbar,
-        payload: {
-          message: 'Se ha creado la nueva orden con éxito',
-          severity: 'success'
-        }
-      })
+      setTimeout(() => {
+        dispatch({
+          type: ActionType.OpenSnackbar,
+          payload: {
+            message: 'Se ha creado la nueva orden con éxito',
+            severity: 'success'
+          }
+        })
+
+        dispatchNewOrder({
+          type: NewOrderActionType.UpdateCreatingNewOrderState,
+          payload: {
+            btnCreateOrderClickHandler: undefined,
+            creatingNewOrder: false
+          }
+        })
+      }, 500)
 
       setTimeout(() => {
         dispatch({
           type: ActionType.CloseSnackbar
         })
-      }, 3000)
-    } finally {
+      }, 5000)
+    } catch (e) {
+      dispatch({ type: ActionType.CloseModal })
+      dispatchNewOrder({ type: NewOrderActionType.ClearNewOrderData })
+
+      setTimeout(() => {
+        dispatch({
+          type: ActionType.OpenSnackbar,
+          payload: {
+            message:
+              'Ocurrió un error al crear la orden. Intentelo de vuelta en unos instantes.',
+            severity: 'error'
+          }
+        })
+
+        dispatchNewOrder({
+          type: NewOrderActionType.UpdateCreatingNewOrderState,
+          payload: {
+            btnCreateOrderClickHandler: undefined,
+            creatingNewOrder: false
+          }
+        })
+      }, 500)
+
+      setTimeout(() => {
+        dispatch({
+          type: ActionType.CloseSnackbar
+        })
+      }, 5000)
     }
   }
 
