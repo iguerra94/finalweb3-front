@@ -25,6 +25,7 @@ const NewOrderProductData = ({ classes }) => {
 
   useEffect(() => {
     if (productData) {
+      console.log('HOLA')
       setData(productData)
     } else {
       dispatch({

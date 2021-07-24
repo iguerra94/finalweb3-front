@@ -41,7 +41,7 @@ const NewOrderBasicData = ({ classes }) => {
     try {
       const results = await orderService.getOrders()
 
-      newOrderNumber = `${results.length}`.padStart(8, '0')
+      newOrderNumber = `${results.length + 1}`.padStart(8, '0')
     } catch (e) {
       newOrderNumber = `0`.padStart(8, '0')
     } finally {
