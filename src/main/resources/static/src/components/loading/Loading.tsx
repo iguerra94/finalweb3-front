@@ -1,17 +1,15 @@
 import { Box, CircularProgress } from '@material-ui/core'
-import useStyles from './LoadingStyles'
 
 interface Props {
   className?: string
+  style?: React.CSSProperties
   size?: number
   thickness?: number
 }
 
-const Loading = ({ className, size = 32, thickness = 4 }: Props) => {
-  const classes = useStyles()
-
+const Loading = ({ className, style, size = 32, thickness = 4 }: Props) => {
   return (
-    <Box className={className ? className : classes.container}>
+    <Box style={style} className={className ? className : undefined}>
       <CircularProgress size={size} thickness={thickness} />
     </Box>
   )

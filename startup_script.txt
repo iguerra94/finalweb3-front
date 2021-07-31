@@ -1,1 +1,11 @@
-rm -rf target && mvn -Dmaven.test.skip=true -Dbuild=jar package && cp target/iw3.jar docker-config/spring && docker-compose up --build
+# Borrar carpeta target
+rm -rf target 
+
+# Buildear el proyecto
+mvn -Dmaven.test.skip=true -Dbuild=jar package
+
+# Copiar archivo .jar en la carpeta donde va a estar leyendo el contenedor de docker
+cp target/iw3.jar docker-config/spring 
+
+# Arrancar el proyecto
+docker-compose up --build

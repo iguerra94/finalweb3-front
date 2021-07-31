@@ -3,6 +3,13 @@ import { initialUIState, UIState } from './ui-state'
 
 export const uiReducer = (state: UIState, action: UIActions) => {
   switch (action.type) {
+    case ActionType.SetLoading: {
+      const { payload } = action
+      return {
+        ...state,
+        loadingData: payload.loadingData
+      }
+    }
     case ActionType.OpenModal: {
       const { payload } = action
       return {
@@ -10,7 +17,8 @@ export const uiReducer = (state: UIState, action: UIActions) => {
         modalData: {
           modalOpen: true,
           modalTitle: payload.modalTitle,
-          modalBody: payload.modalBody
+          modalBody: payload.modalBody,
+          modalDynamicData: payload.modalDynamicData
         }
       }
     }

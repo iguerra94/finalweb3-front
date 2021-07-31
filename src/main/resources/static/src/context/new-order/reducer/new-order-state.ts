@@ -46,11 +46,9 @@ export interface NewOrderUIData {
 export const initialNewOrderState: NewOrderState = {
   basicData: {
     numeroOrden: '',
-    fechaPrevistaCarga: moment()
-      .add('3', 'minutes')
-      .format(moment.HTML5_FMT.DATETIME_LOCAL_SECONDS),
-    tiempoAlmacenaje: 1,
-    preset: 500
+    fechaPrevistaCarga: moment().format(moment.HTML5_FMT.DATE),
+    tiempoAlmacenaje: 0,
+    preset: 0
   },
   truckData: {
     dominio: '',

@@ -20,11 +20,12 @@ const NewOrderTruckData = ({ classes }) => {
   })
 
   const [errors, setErrors] = useState({
+    dominio: '',
     chofer: {
-      nombre: 'Debe ser mayor a cuatro caracteres',
-      apellido: 'Debe ser mayor a cuatro caracteres',
-      dni: 'El dni no es valido',
-      telefono: 'El telefono no es valido'
+      nombre: '',
+      apellido: '',
+      dni: '',
+      telefono: ''
     }
   })
 
@@ -34,37 +35,23 @@ const NewOrderTruckData = ({ classes }) => {
   } = useNewOrder()
 
   useEffect(() => {
-    setData(truckData)
+    if (truckData) {
+      setData(truckData)
+
+      validateData()
+    } else {
+      dispatch({
+        type: ActionType.UpdateBtnNextStepEnabledState,
+        payload: {
+          btnNextStepEnabled: false
+        }
+      })
+    }
 
     if (!truckData.dominio) {
-      generarDominioAleatorio(7)
       generarCapacidadesAleatoriasCisternas(200, 2000)
     }
   }, [])
-
-  const generarDominioAleatorio = (num: number) => {
-    const characters =
-      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
-    let result1 = ' '
-    const charactersLength = characters.length
-    for (let i = 0; i < num; i++) {
-      result1 += characters.charAt(Math.floor(Math.random() * charactersLength))
-    }
-
-    setData((_data) => ({
-      ..._data,
-      dominio: result1
-    }))
-
-    // Update NewOrder context state
-    dispatch({
-      type: ActionType.UpdateTruckData,
-      payload: {
-        ...data,
-        dominio: result1
-      }
-    })
-  }
 
   const generarCapacidadesAleatoriasCisternas = (inf: number, sup: number) => {
     const capacidad1 = Math.floor(inf + Math.random() * (sup - inf))
@@ -95,14 +82,31 @@ const NewOrderTruckData = ({ classes }) => {
     dispatch({
       type: ActionType.UpdateBtnNextStepEnabledState,
       payload: {
-        btnNextStepEnabled: Object.values(errors.chofer).every(
-          (value) => value.length === 0
-        )
+        btnNextStepEnabled:
+          errors.dominio.length === 0 &&
+          Object.values(errors.chofer).every((value) => value.length === 0)
       }
     })
   }, [errors])
 
-  const updateTruckData = (prop, value, { type }) => {
+  const updateDomainData = (value) => {
+    // Update local NewOrder state
+    setData((_data) => ({
+      ..._data,
+      dominio: value
+    }))
+
+    // Update NewOrder context state
+    dispatch({
+      type: ActionType.UpdateTruckData,
+      payload: {
+        ...data,
+        dominio: value
+      }
+    })
+  }
+
+  const updateChoferData = (prop, value, { type }) => {
     // Update local NewOrder state
     setData((_data) => ({
       ..._data,
@@ -125,7 +129,14 @@ const NewOrderTruckData = ({ classes }) => {
     })
   }
 
-  const setError = (prop: string, value: string) => {
+  const setDomainError = (value: string) => {
+    setErrors((_errors) => ({
+      ..._errors,
+      dominio: value
+    }))
+  }
+
+  const setChoferError = (prop: string, value: string) => {
     setErrors((_errors) => ({
       ..._errors,
       chofer: {
@@ -135,9 +146,42 @@ const NewOrderTruckData = ({ classes }) => {
     }))
   }
 
-  const nameValid = (value) => value.length >= 4
-  const lastNameValid = (value) => value.length >= 4
-  const dniValid = (value) => /^(\d{8})$/.test(value.toString())
+  const validateData = () => {
+    setDomainError(
+      !domainValid(truckData.dominio)
+        ? 'Debe ser de la forma AAADDD ó AA111AA'
+        : ''
+    )
+
+    setChoferError(
+      'nombre',
+      !nameValid(truckData.chofer.nombre) ? 'Campo requerido' : ''
+    )
+
+    setChoferError(
+      'apellido',
+      !lastNameValid(truckData.chofer.apellido) ? 'Campo requerido' : ''
+    )
+
+    setChoferError(
+      'dni',
+      !dniValid(truckData.chofer.dni) ? 'El dni no es valido' : ''
+    )
+
+    setChoferError(
+      'telefono',
+      !telefonoValid(truckData.chofer.telefono)
+        ? 'El telefono no es valido'
+        : ''
+    )
+  }
+
+  const domainValid = (value) =>
+    /^[a-zA-z]{3}[\d]{3}$/.test(value) ||
+    /^[a-zA-z]{2}[\d]{3}[a-zA-z]{2}$/.test(value)
+  const nameValid = (value) => value.length > 0
+  const lastNameValid = (value) => value.length > 0
+  const dniValid = (value) => /^(\d{7,8})$/.test(value.toString())
   const telefonoValid = (value) =>
     /^(?:(?:00)?549?)?0?(?:11|[2368]\d)(?:(?=\d{0,2}15)\d{2})??\d{8}$/.test(
       value
@@ -145,9 +189,7 @@ const NewOrderTruckData = ({ classes }) => {
 
   return (
     <Box className={classes.sectionContainer} justifyContent="space-between">
-      <Box component={'h3'} className={classes.sectionSubtitle}>
-        Camion
-      </Box>
+      <Box component={'h3'}>Camion</Box>
       <Box className={classes.sectionContent}>
         <Grid container spacing={2} className={classes.gridContainer}>
           <Grid item xs className={classes.gridItem}>
@@ -160,7 +202,24 @@ const NewOrderTruckData = ({ classes }) => {
                 variant="outlined"
                 className={classes.inputWide}
                 value={data?.dominio || truckData?.dominio}
-                disabled
+                onChange={(e) => {
+                  setDomainError(
+                    !domainValid(e.target.value)
+                      ? 'Debe ser de la forma AAADDD ó AA111AA'
+                      : ''
+                  )
+                  updateDomainData(e.target.value)
+                }}
+                onBlur={(e) => {
+                  setDomainError(
+                    !domainValid(e.target.value)
+                      ? 'Debe ser de la forma AAADDD ó AA111AA'
+                      : ''
+                  )
+                  updateDomainData(e.target.value)
+                }}
+                error={errors['dominio'].length > 0}
+                helperText={errors['dominio']}
               />
             </Box>
             <Typography>
@@ -204,21 +263,17 @@ const NewOrderTruckData = ({ classes }) => {
                 className={classes.inputWide}
                 value={data?.chofer.nombre || truckData.chofer.nombre}
                 onChange={(e) => {
-                  setError(
+                  setChoferError(
                     'nombre',
-                    !nameValid(e.target.value)
-                      ? 'Debe ser mayor a cuatro carascteres'
-                      : ''
+                    !nameValid(e.target.value) ? 'Campo requerido' : ''
                   )
-                  updateTruckData('nombre', e.target.value, { type: 'string' })
+                  updateChoferData('nombre', e.target.value, { type: 'string' })
                 }}
                 onBlur={(e) => {
-                  updateTruckData('nombre', e.target.value, { type: 'string' })
-                  setError(
+                  updateChoferData('nombre', e.target.value, { type: 'string' })
+                  setChoferError(
                     'nombre',
-                    !nameValid(e.target.value)
-                      ? 'Debe ser mayor a cuatro carascteres'
-                      : ''
+                    !nameValid(e.target.value) ? 'Campo requerido' : ''
                   )
                 }}
                 error={errors.chofer['nombre'].length > 0}
@@ -232,25 +287,21 @@ const NewOrderTruckData = ({ classes }) => {
                 className={classes.inputWide}
                 value={data?.chofer.apellido || truckData?.chofer.apellido}
                 onChange={(e) => {
-                  setError(
+                  setChoferError(
                     'apellido',
-                    !lastNameValid(e.target.value)
-                      ? 'Debe ser mayor a cuatro carascteres'
-                      : ''
+                    !lastNameValid(e.target.value) ? 'Campo requerido' : ''
                   )
-                  updateTruckData('apellido', e.target.value, {
+                  updateChoferData('apellido', e.target.value, {
                     type: 'string'
                   })
                 }}
                 onBlur={(e) => {
-                  updateTruckData('apellido', e.target.value, {
+                  updateChoferData('apellido', e.target.value, {
                     type: 'string'
                   })
-                  setError(
+                  setChoferError(
                     'apellido',
-                    !lastNameValid(e.target.value)
-                      ? 'Debe ser mayor a cuatro carascteres'
-                      : ''
+                    !lastNameValid(e.target.value) ? 'Campo requerido' : ''
                   )
                 }}
                 error={errors.chofer['apellido'].length > 0}
@@ -265,15 +316,15 @@ const NewOrderTruckData = ({ classes }) => {
                 className={classes.inputWide}
                 value={data?.chofer.dni || truckData?.chofer.dni}
                 onChange={(e) => {
-                  setError(
+                  setChoferError(
                     'dni',
                     !dniValid(e.target.value) ? 'El dni no es valido' : ''
                   )
-                  updateTruckData('dni', e.target.value, { type: 'number' })
+                  updateChoferData('dni', e.target.value, { type: 'number' })
                 }}
                 onBlur={(e) => {
-                  updateTruckData('dni', e.target.value, { type: 'number' })
-                  setError(
+                  updateChoferData('dni', e.target.value, { type: 'number' })
+                  setChoferError(
                     'dni',
                     !dniValid(e.target.value) ? 'El dni no es valido' : ''
                   )
@@ -289,21 +340,21 @@ const NewOrderTruckData = ({ classes }) => {
                 className={classes.inputWide}
                 value={data?.chofer.telefono || truckData?.chofer.telefono}
                 onChange={(e) => {
-                  setError(
+                  setChoferError(
                     'telefono',
                     !telefonoValid(e.target.value)
                       ? 'El telefono no es valido'
                       : ''
                   )
-                  updateTruckData('telefono', e.target.value, {
+                  updateChoferData('telefono', e.target.value, {
                     type: 'string'
                   })
                 }}
                 onBlur={(e) => {
-                  updateTruckData('telefono', e.target.value, {
+                  updateChoferData('telefono', e.target.value, {
                     type: 'string'
                   })
-                  setError(
+                  setChoferError(
                     'telefono',
                     !telefonoValid(e.target.value)
                       ? 'El telefono no es valido'

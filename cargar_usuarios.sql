@@ -10,11 +10,11 @@ use testw3;
 /* Alta de usuarios */
 
 /* Usuario admin */
-INSERT INTO user (id, username, password, name, last_name) VALUES (1, 'admin', '$2y$04$5eAy2xmYE7BlCEkxJc2LM.gAoSYqKUhoUG7Z8sXpGA6vewb/zeg7W', 'Admin', 'Admin');
+INSERT INTO user (id, username, password, name, last_name) VALUES (1, 'admin', '$2a$10$BjJ.J3UhGwn.7DRSMqnPSOI.7OPWrVuShLtrQL34wu17k5pzv/2KG', 'Admin', 'Admin');
 
 /* Usuarios normales */
 /* Password: password */
-INSERT INTO user (id, username, password, name, last_name) VALUES (2, 'iguerra94', '$2a$04$peoqHkMz5sqfFJTWNQw1jufompnKRQHkU3vDO9lJK8/x4/utEXVgW', 'Ivan', 'Guerra');
+INSERT INTO user (id, username, password, name, last_name) VALUES (2, 'iguerra94', '$2a$10$lQAWoxtO.pAEIotoRVn9C.ocrYVNLBHAK9vVfIkoQ5xKzOgizHqHO', 'Ivan', 'Guerra');
 
 /* Alta de roles */
 

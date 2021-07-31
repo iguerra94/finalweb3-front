@@ -5,8 +5,8 @@ import LoginData from 'src/model/dto/LoginData'
 import LoginDataError from 'src/model/dto/LoginDataError'
 import authService from 'src/service/authService'
 import { TIMEOUT_500_MS } from 'src/utils/config-utils'
-import { digestMessage } from 'src/utils/function-utils'
 import useLocalStorage, { LS_KEYS } from './useLocalStorage'
+import { digestMessage } from 'src/utils/function-utils'
 
 const useLoginForm = (passwordInputRef: React.RefObject<any>) => {
   const [loginData, setLoginData] = useState<LoginData>({
@@ -69,6 +69,7 @@ const useLoginForm = (passwordInputRef: React.RefObject<any>) => {
             }, TIMEOUT_500_MS)
           })
           .catch((err) => {
+            console.log(err)
             setTimeout(() => {
               dispatch({
                 type: ActionType.ShowLoginError,

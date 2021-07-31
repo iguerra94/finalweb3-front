@@ -19,6 +19,7 @@ const useStyles = makeStyles(() =>
     sectionContainer: {
       display: 'flex',
       flexDirection: 'column',
+      justifyContent: 'space-evenly',
       margin: '0 2rem',
       height: 'calc(100vh - 90px)'
     },
@@ -37,12 +38,34 @@ const useStyles = makeStyles(() =>
     orderStateItem: {
       color: 'white',
       borderRadius: '50%',
+      fontSize: '12px',
       padding: '8px',
-      width: '30px',
-      height: '30px',
+      width: '20px',
+      height: '20px',
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center'
+    },
+    itemDetailText: {
+      fontSize: '14px',
+      lineHeight: '24px',
+      display: 'flex',
+      alignItems: 'center'
+    },
+    gridContainer: {
+      margin: 0,
+      marginBottom: '12px',
+      gap: '12px'
+    },
+    gridItem: {
+      backgroundColor: 'rgba(0,0,0,0.08)',
+      minHeight: '80px',
+      padding: '16px !important'
+    },
+    gridInnerItem: {
+      backgroundColor: 'transparent',
+      minHeight: '80px',
+      padding: '0 !important'
     },
     orderActionBtn: {
       backgroundColor: '#0288D1',
@@ -57,7 +80,7 @@ const useStyles = makeStyles(() =>
         boxShadow: 'none'
       }
     },
-    loadingSm: { margin: '12px 18px' }
+    loadingSm: { height: '100%', margin: '0 1rem' }
   })
 )
 
