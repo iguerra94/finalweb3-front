@@ -88,6 +88,7 @@ const CreatingNewOrder = () => {
         })
       }, 5000)
     } catch (e) {
+      console.log('Error:', e.response.data.message)
       dispatch({ type: ActionType.CloseModal })
 
       setTimeout(() => {
