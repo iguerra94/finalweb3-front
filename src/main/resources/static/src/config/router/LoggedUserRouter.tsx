@@ -10,6 +10,7 @@ import useLocalStorage, { LS_KEYS } from 'src/hooks/useLocalStorage'
 import { ActionType } from '../../context/auth/reducer/auth-actions'
 
 import Axios from 'axios'
+import { TIMEOUT_500_MS } from 'src/utils/config-utils'
 
 const LoggedUserRouter = () => {
   const [, setToken] = useLocalStorage(LS_KEYS.AUTH_TOKEN, '')
@@ -33,7 +34,10 @@ const LoggedUserRouter = () => {
   const handleLogout = () => {
     dispatch({ type: ActionType.ValidateCredentials })
     setToken(undefined)
-    dispatch({ type: ActionType.Logout })
+
+    setTimeout(() => {
+      dispatch({ type: ActionType.Logout })
+    }, TIMEOUT_500_MS)
   }
 
   return (

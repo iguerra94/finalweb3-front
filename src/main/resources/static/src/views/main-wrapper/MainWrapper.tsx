@@ -16,7 +16,7 @@ const MainWrapper: React.FC = ({ children }) => {
   const [masasAcumuladas, setMasasAcumuladas] = useState<any>({})
 
   const {
-    state: { userIsLogged }
+    state: { user, userIsLogged }
   } = useAuth()
 
   const {
@@ -30,7 +30,9 @@ const MainWrapper: React.FC = ({ children }) => {
   } = useOrdersLoad()
 
   useEffect(() => {
-    getOrders()
+    if (Object.keys(user).length > 0) {
+      getOrders()
+    }
   }, [])
 
   useEffect(() => {
@@ -40,11 +42,6 @@ const MainWrapper: React.FC = ({ children }) => {
 
         // Update Pump of each order
         updateOrdersPump()
-
-        dispatch({
-          type: ActionType.SetLoading,
-          payload: { loadingData: true }
-        })
 
         getOrders()
       }, 5000)
@@ -107,6 +104,11 @@ const MainWrapper: React.FC = ({ children }) => {
 
   const getOrders = async () => {
     try {
+      dispatch({
+        type: ActionType.SetLoading,
+        payload: { loadingData: true }
+      })
+
       const results: Orden[] = await orderService.getOrders()
 
       ordersLoadDispatch({

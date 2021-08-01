@@ -68,7 +68,7 @@ const OrderConciliation = () => {
               style={{ display: 'flex', alignItems: 'center' }}
             />
           ) : (
-            <span>{conciliation?.pesajeInicial} kg.</span>
+            <span>{conciliation?.pesajeInicial} kg</span>
           )}
         </Box>
         <Box
@@ -87,7 +87,7 @@ const OrderConciliation = () => {
               style={{ display: 'flex', alignItems: 'center' }}
             />
           ) : (
-            <span>{conciliation?.pesajeFinal} kg.</span>
+            <span>{conciliation?.pesajeFinal} kg</span>
           )}
         </Box>
         <Box
@@ -127,7 +127,7 @@ const OrderConciliation = () => {
               style={{ display: 'flex', alignItems: 'center' }}
             />
           ) : (
-            <span>{conciliation?.netoBalanza} kg.</span>
+            <span>{conciliation?.netoBalanza} kg</span>
           )}
         </Box>
         <Box
@@ -147,7 +147,7 @@ const OrderConciliation = () => {
               style={{ display: 'flex', alignItems: 'center' }}
             />
           ) : (
-            <span>{conciliation?.diferenciaBalanzaCaudalimetro} kg.</span>
+            <span>{conciliation?.diferenciaBalanzaCaudalimetro} kg</span>
           )}
         </Box>
         <Box
@@ -166,7 +166,7 @@ const OrderConciliation = () => {
               style={{ display: 'flex', alignItems: 'center' }}
             />
           ) : (
-            <span>{conciliation?.densidad.toFixed(2)} kg/cm3</span>
+            <span>{conciliation?.densidad.toFixed(2)} kg/m3</span>
           )}
         </Box>
         <Box
@@ -186,7 +186,7 @@ const OrderConciliation = () => {
               style={{ display: 'flex', alignItems: 'center' }}
             />
           ) : (
-            <span>{conciliation?.temperatura.toFixed(2)} C</span>
+            <span>{conciliation?.temperatura.toFixed(2)} °C</span>
           )}
         </Box>
         <Box
@@ -205,7 +205,7 @@ const OrderConciliation = () => {
               style={{ display: 'flex', alignItems: 'center' }}
             />
           ) : (
-            <span>{conciliation?.caudal.toFixed(2)}</span>
+            <span>{conciliation?.caudal.toFixed(2)} kg/h</span>
           )}
         </Box>
       </DialogContent>
