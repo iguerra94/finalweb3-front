@@ -3,7 +3,6 @@ import { Suspense } from 'react'
 import { Switch } from 'react-router-dom'
 import { CustomPrivateRouteProps, ROUTES } from './routes'
 
-import Loading from 'src/components/loading/Loading'
 import PrivateRoute from './PrivateRoute'
 import { HTTP_STATUS_CODE } from 'src/api/http-status-codes'
 import { useAuth } from 'src/context/auth/AuthContext'
@@ -38,7 +37,7 @@ const LoggedUserRouter = () => {
   }
 
   return (
-    <Suspense fallback={<Loading />}>
+    <Suspense fallback={<span>Cargando...</span>}>
       <Switch>
         {Object.values(ROUTES.PrivateRoutes).map(
           (ROUTE: CustomPrivateRouteProps) => (

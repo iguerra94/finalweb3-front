@@ -17,11 +17,11 @@ const NewOrderClientData = ({ classes }) => {
   })
 
   const [errors, setErrors] = useState({
-    nombre: 'Debe ser mayor a cuatro carascteres',
-    apellido: 'Debe ser mayor a cuatro carascteres',
-    dni: 'El dni no es valido',
-    telefono: 'El telefono no es valido',
-    email: 'El email no es valido'
+    nombre: '',
+    apellido: '',
+    dni: '',
+    telefono: '',
+    email: ''
   })
 
   const {
@@ -32,6 +32,8 @@ const NewOrderClientData = ({ classes }) => {
   useEffect(() => {
     if (clientData) {
       setData(clientData)
+
+      validateData()
     } else {
       dispatch({
         type: ActionType.UpdateBtnNextStepEnabledState,
@@ -74,9 +76,30 @@ const NewOrderClientData = ({ classes }) => {
     }))
   }
 
-  const nameValid = (value) => value.length >= 4
-  const lastNameValid = (value) => value.length >= 4
-  const dniValid = (value) => /^(\d{8})$/.test(value.toString())
+  const validateData = () => {
+    setError('nombre', !nameValid(clientData.nombre) ? 'Campo requerido' : '')
+
+    setError(
+      'apellido',
+      !lastNameValid(clientData.apellido) ? 'Campo requerido' : ''
+    )
+
+    setError('dni', !dniValid(clientData.dni) ? 'El dni no es valido' : '')
+
+    setError(
+      'telefono',
+      !telefonoValid(clientData.telefono) ? 'El telefono no es valido' : ''
+    )
+
+    setError(
+      'email',
+      !emailValid(clientData.email) ? 'El email no es valido' : ''
+    )
+  }
+
+  const nameValid = (value) => value.length > 0
+  const lastNameValid = (value) => value.length > 0
+  const dniValid = (value) => /^(\d{7,8})$/.test(value.toString())
   const telefonoValid = (value) =>
     /^(?:(?:00)?549?)?0?(?:11|[2368]\d)(?:(?=\d{0,2}15)\d{2})??\d{8}$/.test(
       value
@@ -85,9 +108,7 @@ const NewOrderClientData = ({ classes }) => {
 
   return (
     <Box className={classes.sectionContainer}>
-      <Box component={'h3'} className={classes.sectionSubtitle}>
-        Cliente
-      </Box>
+      <Box component={'h3'}>Cliente</Box>
       <Box className={classes.sectionContent}>
         <Box className={classes.inputContainer}>
           <TextField
@@ -98,9 +119,7 @@ const NewOrderClientData = ({ classes }) => {
             onChange={(e) => {
               setError(
                 'nombre',
-                !nameValid(e.target.value)
-                  ? 'Debe ser mayor a cuatro carascteres'
-                  : ''
+                !nameValid(e.target.value) ? 'Campo requerido' : ''
               )
               updateClientData('nombre', e.target.value, { type: 'string' })
             }}
@@ -108,9 +127,7 @@ const NewOrderClientData = ({ classes }) => {
               updateClientData('nombre', e.target.value, { type: 'string' })
               setError(
                 'nombre',
-                !nameValid(e.target.value)
-                  ? 'Debe ser mayor a cuatro carascteres'
-                  : ''
+                !nameValid(e.target.value) ? 'Campo requerido' : ''
               )
             }}
             error={errors['nombre'].length > 0}
@@ -126,9 +143,7 @@ const NewOrderClientData = ({ classes }) => {
             onChange={(e) => {
               setError(
                 'apellido',
-                !lastNameValid(e.target.value)
-                  ? 'Debe ser mayor a cuatro carascteres'
-                  : ''
+                !lastNameValid(e.target.value) ? 'Campo requerido' : ''
               )
               updateClientData('apellido', e.target.value, { type: 'string' })
             }}
@@ -136,9 +151,7 @@ const NewOrderClientData = ({ classes }) => {
               updateClientData('apellido', e.target.value, { type: 'string' })
               setError(
                 'apellido',
-                !lastNameValid(e.target.value)
-                  ? 'Debe ser mayor a cuatro carascteres'
-                  : ''
+                !lastNameValid(e.target.value) ? 'Campo requerido' : ''
               )
             }}
             error={errors['apellido'].length > 0}

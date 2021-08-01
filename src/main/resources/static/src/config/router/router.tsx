@@ -6,7 +6,7 @@ import {
   Route,
   Switch
 } from 'react-router-dom'
-import Loading from 'src/components/loading/Loading'
+// import Loading from 'src/components/loading/Loading'
 import { useAuth } from 'src/context/auth/AuthContext'
 import userService from 'src/service/userService'
 import { TIMEOUT_500_MS } from 'src/utils/config-utils'
@@ -49,11 +49,11 @@ const AppRouter = () => {
   }
 
   if (validatingCredentials) {
-    return <Loading />
+    return <span>Cargando...</span>
   }
 
   return (
-    <Suspense fallback={<Loading />}>
+    <Suspense fallback={<span>Cargando...</span>}>
       <Router>
         <Switch>
           {/* Root Route: If user is logged, navigate to /order. Else render Login component */}

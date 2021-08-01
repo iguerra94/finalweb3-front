@@ -3,24 +3,23 @@ import TextField from '@material-ui/core/TextField'
 import Tooltip from '@material-ui/core/Tooltip'
 import { HelpOutline } from '@material-ui/icons'
 import moment from 'moment'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNewOrder } from 'src/context/new-order/NewOrderContext'
 import { ActionType } from 'src/context/new-order/reducer/new-order-actions'
 import { BasicData } from 'src/context/new-order/reducer/new-order-state'
 import orderService from 'src/service/orderService'
 
 const NewOrderBasicData = ({ classes }) => {
-  const loadDateInputRef = useRef<any>(null)
-  const storeTimeInputRef = useRef<any>(null)
-  const presetInputRef = useRef<any>(null)
-
   const [data, setData] = useState<BasicData>({
     numeroOrden: '',
-    fechaPrevistaCarga: moment()
-      .add('3', 'minutes')
-      .format(moment.HTML5_FMT.DATETIME_LOCAL_SECONDS),
-    tiempoAlmacenaje: 1,
-    preset: 500
+    fechaPrevistaCarga: moment().format(moment.HTML5_FMT.DATE),
+    tiempoAlmacenaje: 0,
+    preset: 0
+  })
+
+  const [errors, setErrors] = useState({
+    tiempoAlmacenaje: '',
+    preset: ''
   })
 
   const {
@@ -29,12 +28,34 @@ const NewOrderBasicData = ({ classes }) => {
   } = useNewOrder()
 
   useEffect(() => {
-    setData(basicData)
+    if (basicData) {
+      setData(basicData)
+
+      validateData()
+    } else {
+      dispatch({
+        type: ActionType.UpdateBtnNextStepEnabledState,
+        payload: {
+          btnNextStepEnabled: false
+        }
+      })
+    }
 
     if (!basicData.numeroOrden) {
       setNewOrderNumber()
     }
   }, [])
+
+  useEffect(() => {
+    dispatch({
+      type: ActionType.UpdateBtnNextStepEnabledState,
+      payload: {
+        btnNextStepEnabled: Object.values(errors).every(
+          (value) => value.length === 0
+        )
+      }
+    })
+  }, [errors])
 
   const setNewOrderNumber = async () => {
     let newOrderNumber
@@ -61,34 +82,6 @@ const NewOrderBasicData = ({ classes }) => {
     }
   }
 
-  useEffect(() => {
-    const dataCompleted =
-      data.numeroOrden &&
-      data.numeroOrden.length > 0 &&
-      data.fechaPrevistaCarga &&
-      // data.fechaPrevistaCarga > 0 &&
-      data.tiempoAlmacenaje &&
-      data.tiempoAlmacenaje > 0 &&
-      data.preset &&
-      data.preset > 0
-
-    if (dataCompleted) {
-      dispatch({
-        type: ActionType.UpdateBtnNextStepEnabledState,
-        payload: {
-          btnNextStepEnabled: true
-        }
-      })
-    } else {
-      dispatch({
-        type: ActionType.UpdateBtnNextStepEnabledState,
-        payload: {
-          btnNextStepEnabled: false
-        }
-      })
-    }
-  }, [data])
-
   const updateBasicData = (prop, value, { type }) => {
     // Update local NewOrder state
     setData((_data) => ({
@@ -103,11 +96,36 @@ const NewOrderBasicData = ({ classes }) => {
     })
   }
 
+  const setError = (prop: string, value: string) => {
+    setErrors((_errors) => ({
+      ..._errors,
+      [prop]: value
+    }))
+  }
+
+  const validateData = () => {
+    setError(
+      'tiempoAlmacenaje',
+      !tiempoAlmacenajeValid(basicData.tiempoAlmacenaje)
+        ? 'Debe ser un valor entre 1 y 10'
+        : ''
+    )
+
+    setError(
+      'preset',
+      !presetValid(basicData.preset) ? 'Debe ser un valor entre 1 y 10000' : ''
+    )
+  }
+
+  const tiempoAlmacenajeValid = (value) =>
+    parseInt(value) >= 1 && parseInt(value) <= 10
+
+  const presetValid = (value) =>
+    parseInt(value) >= 1 && parseInt(value) <= 10000
+
   return (
     <Box className={classes.sectionContainer}>
-      <Box component={'h3'} className={classes.sectionSubtitle}>
-        Datos de la orden
-      </Box>
+      <Box component={'h3'}>Datos de la orden</Box>
       <Box className={classes.sectionContent}>
         <Box className={classes.inputContainer}>
           <TextField
@@ -123,17 +141,14 @@ const NewOrderBasicData = ({ classes }) => {
         </Box>
         <Box className={classes.inputContainer}>
           <TextField
-            ref={loadDateInputRef}
             label="Fecha prevista de carga"
             InputLabelProps={{ shrink: true }}
             InputProps={{
               inputProps: {
-                min: moment()
-                  .add('3', 'minutes')
-                  .format(moment.HTML5_FMT.DATETIME_LOCAL_SECONDS)
+                min: moment().format(moment.HTML5_FMT.DATE)
               }
             }}
-            type="datetime-local"
+            type="date"
             variant="outlined"
             className={classes.input}
             value={data?.fechaPrevistaCarga || basicData.fechaPrevistaCarga}
@@ -142,17 +157,6 @@ const NewOrderBasicData = ({ classes }) => {
                 type: 'date'
               })
             }}
-            onKeyUp={() => {
-              if (data.fechaPrevistaCarga < loadDateInputRef.current.min) {
-                updateBasicData(
-                  'fechaPrevistaCarga',
-                  loadDateInputRef.current.min,
-                  {
-                    type: 'date'
-                  }
-                )
-              }
-            }}
           />
           <Tooltip title="Turno para cargar combustible">
             <HelpOutline />
@@ -160,36 +164,35 @@ const NewOrderBasicData = ({ classes }) => {
         </Box>
         <Box className={classes.inputContainer}>
           <TextField
-            ref={storeTimeInputRef}
             label="Tiempo de almacenaje"
-            InputProps={{
-              inputProps: {
-                min: 1,
-                max: 10
-              }
-            }}
             type="number"
             variant="outlined"
             className={classes.input}
             value={data?.tiempoAlmacenaje || basicData?.tiempoAlmacenaje}
             onChange={(e) => {
+              setError(
+                'tiempoAlmacenaje',
+                !tiempoAlmacenajeValid(e.target.value)
+                  ? 'Debe ser un valor entre 1 y 10'
+                  : ''
+              )
               updateBasicData('tiempoAlmacenaje', e.target.value, {
                 type: 'number'
               })
             }}
-            onKeyUp={() => {
-              if (data.tiempoAlmacenaje < 1) {
-                updateBasicData('tiempoAlmacenaje', 1, {
-                  type: 'number'
-                })
-              }
-
-              if (data.tiempoAlmacenaje > 10) {
-                updateBasicData('tiempoAlmacenaje', 10, {
-                  type: 'number'
-                })
-              }
+            onBlur={(e) => {
+              setError(
+                'tiempoAlmacenaje',
+                !tiempoAlmacenajeValid(e.target.value)
+                  ? 'Debe ser un valor entre 1 y 10'
+                  : ''
+              )
+              updateBasicData('tiempoAlmacenaje', e.target.value, {
+                type: 'number'
+              })
             }}
+            error={errors['tiempoAlmacenaje'].length > 0}
+            helperText={errors['tiempoAlmacenaje']}
           />
           <Tooltip title="Frecuencia de almacenamiento">
             <HelpOutline />
@@ -197,34 +200,31 @@ const NewOrderBasicData = ({ classes }) => {
         </Box>
         <Box className={classes.inputContainer}>
           <TextField
-            ref={presetInputRef}
             label="Preset"
-            InputProps={{
-              inputProps: {
-                min: 500,
-                max: 2000
-              }
-            }}
             type="number"
             variant="outlined"
             className={classes.input}
             value={data?.preset || basicData?.preset}
             onChange={(e) => {
+              setError(
+                'preset',
+                !presetValid(e.target.value)
+                  ? 'Debe ser un valor entre 1 y 10000'
+                  : ''
+              )
               updateBasicData('preset', e.target.value, { type: 'number' })
             }}
-            onKeyUp={() => {
-              if (data.preset < 500) {
-                updateBasicData('preset', 500, {
-                  type: 'number'
-                })
-              }
-
-              if (data.preset > 2000) {
-                updateBasicData('preset', 2000, {
-                  type: 'number'
-                })
-              }
+            onBlur={(e) => {
+              setError(
+                'preset',
+                !presetValid(e.target.value)
+                  ? 'Debe ser un valor entre 1 y 10000'
+                  : ''
+              )
+              updateBasicData('preset', e.target.value, { type: 'number' })
             }}
+            error={errors['preset'].length > 0}
+            helperText={errors['preset']}
           />
           <Tooltip title="Limite de carga">
             <HelpOutline />

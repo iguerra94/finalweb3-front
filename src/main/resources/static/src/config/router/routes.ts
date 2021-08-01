@@ -29,7 +29,7 @@ export const ROUTES = {
       component: OrderList
     },
     OrderDetail: {
-      pathUrl: (orderId?: string) => `/order/${orderId ? `${orderId}` : ':id'}`,
+      pathUrl: (id?: string) => `/order/${id ? `${id}` : ':id'}`,
       pathTitle: `Detalle de orden`,
       component: OrderDetail
     }

@@ -1,10 +1,18 @@
 import { Color } from '@material-ui/lab'
 
 export enum ActionType {
+  SetLoading,
   OpenModal,
   OpenSnackbar,
   CloseModal,
   CloseSnackbar
+}
+
+export interface SetLoading {
+  type: ActionType.SetLoading
+  payload: {
+    loadingData: boolean
+  }
 }
 
 export interface OpenModal {
@@ -12,6 +20,7 @@ export interface OpenModal {
   payload: {
     modalBody: React.LazyExoticComponent<() => JSX.Element>
     modalTitle: string
+    modalDynamicData?: any
   }
 }
 
@@ -31,4 +40,9 @@ export interface CloseSnackbar {
   type: ActionType.CloseSnackbar
 }
 
-export type UIActions = OpenModal | OpenSnackbar | CloseModal | CloseSnackbar
+export type UIActions =
+  | SetLoading
+  | OpenModal
+  | OpenSnackbar
+  | CloseModal
+  | CloseSnackbar

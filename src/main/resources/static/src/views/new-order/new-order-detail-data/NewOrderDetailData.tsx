@@ -7,6 +7,7 @@ import { useNewOrder } from 'src/context/new-order/NewOrderContext'
 import { ActionType } from 'src/context/new-order/reducer/new-order-actions'
 import { useUI } from 'src/context/ui/UIContext'
 import { ActionType as UIActionType } from 'src/context/ui/reducer/ui-actions'
+import { formatDate } from 'src/utils/function-utils'
 
 const CreatingNewOrder = React.lazy(
   () => import('src/components/modal-body/creating-new-order/CreatingNewOrder')
@@ -35,9 +36,7 @@ const NewOrderDetailData = ({ classes }) => {
 
   return (
     <Box className={classes.sectionContainer}>
-      <Box component={'h3'} className={classes.sectionSubtitle}>
-        Detalle de la orden
-      </Box>
+      <Box component={'h3'}>Detalle de la orden</Box>
       <Box className={classes.sectionContent}>
         <Grid container spacing={2}>
           <Grid item xs>
@@ -46,20 +45,20 @@ const NewOrderDetailData = ({ classes }) => {
             </Box>
             <Box>
               <Typography className={classes.itemDetailText}>
-                <strong>Numero de orden: </strong>
+                <strong>Numero de orden: </strong>#
                 {state.basicData?.numeroOrden}
               </Typography>
               <Typography className={classes.itemDetailText}>
                 <strong>Fecha prevista de carga: </strong>
-                {new Date().toString()}
+                {formatDate(state.basicData!.fechaPrevistaCarga)}
               </Typography>
               <Typography className={classes.itemDetailText}>
                 <strong>Tiempo de almacenaje: </strong>
-                {state.basicData?.tiempoAlmacenaje}
+                {state.basicData?.tiempoAlmacenaje}seg
               </Typography>
               <Typography className={classes.itemDetailText}>
                 <strong>Preset: </strong>
-                {state.basicData?.preset}
+                {state.basicData?.preset}L
               </Typography>
             </Box>
           </Grid>
@@ -75,7 +74,7 @@ const NewOrderDetailData = ({ classes }) => {
                 <strong>Dominio: </strong>
                 {state.truckData?.dominio}
               </Typography>
-              {state.truckData?.cisternaList.map((cisterna, index) => (
+              {state.truckData?.cisternaList!.map((cisterna, index) => (
                 <Typography key={index} className={classes.itemDetailText}>
                   <strong>Cisterna #{index + 1}: </strong>
                   {cisterna.capacidad}L

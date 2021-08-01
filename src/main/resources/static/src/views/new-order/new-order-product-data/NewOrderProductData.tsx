@@ -13,9 +13,9 @@ const NewOrderProductData = ({ classes }) => {
   })
 
   const [errors, setErrors] = useState({
-    nombre: 'Debe ser mayor a cuatro carascteres',
-    descripcion: 'Debe ser mayor a cuatro carascteres',
-    precio: 'Debe ser un valor entre $200 y $10000'
+    nombre: '',
+    descripcion: '',
+    precio: ''
   })
 
   const {
@@ -25,8 +25,9 @@ const NewOrderProductData = ({ classes }) => {
 
   useEffect(() => {
     if (productData) {
-      console.log('HOLA')
       setData(productData)
+
+      validateData()
     } else {
       dispatch({
         type: ActionType.UpdateBtnNextStepEnabledState,
@@ -69,15 +70,29 @@ const NewOrderProductData = ({ classes }) => {
     }))
   }
 
-  const nameValid = (value) => value.length >= 4
-  const descriptionValid = (value) => value.length >= 4
+  const validateData = () => {
+    setError('nombre', !nameValid(productData.nombre) ? 'Campo requerido' : '')
+
+    setError(
+      'descripcion',
+      !descriptionValid(productData.descripcion) ? 'Campo requerido' : ''
+    )
+
+    setError(
+      'precio',
+      !priceValid(productData.precio)
+        ? 'Debe ser un valor entre $200 y $10000'
+        : ''
+    )
+  }
+
+  const nameValid = (value) => value.length > 0
+  const descriptionValid = (value) => value.length > 0
   const priceValid = (value) => value && value >= 200 && value <= 10000
 
   return (
     <Box className={classes.sectionContainer} justifyContent="space-between">
-      <Box component={'h3'} className={classes.sectionSubtitle}>
-        Producto
-      </Box>
+      <Box component={'h3'}>Producto</Box>
       <Box className={classes.sectionContent}>
         <Box className={classes.inputContainer}>
           <TextField
@@ -88,9 +103,7 @@ const NewOrderProductData = ({ classes }) => {
             onChange={(e) => {
               setError(
                 'nombre',
-                !nameValid(e.target.value)
-                  ? 'Debe ser mayor a cuatro carascteres'
-                  : ''
+                !nameValid(e.target.value) ? 'Campo requerido' : ''
               )
               updateProductData('nombre', e.target.value, { type: 'string' })
             }}
@@ -98,9 +111,7 @@ const NewOrderProductData = ({ classes }) => {
               updateProductData('nombre', e.target.value, { type: 'string' })
               setError(
                 'nombre',
-                !nameValid(e.target.value)
-                  ? 'Debe ser mayor a cuatro carascteres'
-                  : ''
+                !nameValid(e.target.value) ? 'Campo requerido' : ''
               )
             }}
             error={errors['nombre'].length > 0}
@@ -116,9 +127,7 @@ const NewOrderProductData = ({ classes }) => {
             onChange={(e) => {
               setError(
                 'descripcion',
-                !descriptionValid(e.target.value)
-                  ? 'Debe ser mayor a cuatro carascteres'
-                  : ''
+                !descriptionValid(e.target.value) ? 'Campo requerido' : ''
               )
               updateProductData('descripcion', e.target.value, {
                 type: 'string'
@@ -130,9 +139,7 @@ const NewOrderProductData = ({ classes }) => {
               })
               setError(
                 'descripcion',
-                !descriptionValid(e.target.value)
-                  ? 'Debe ser mayor a cuatro carascteres'
-                  : ''
+                !descriptionValid(e.target.value) ? 'Campo requerido' : ''
               )
             }}
             error={errors['descripcion'].length > 0}

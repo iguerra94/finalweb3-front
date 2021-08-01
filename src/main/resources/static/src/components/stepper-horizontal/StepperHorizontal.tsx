@@ -40,10 +40,6 @@ const StepperHorizontal = ({ steps, activeStep, setActiveStep }) => {
     }
   }
 
-  const goToNthTab = (tabIndex) => {
-    setActiveStep(tabIndex)
-  }
-
   const showCancelNewOrderModal = () => {
     dispatch({
       type: ActionType.OpenModal,
@@ -63,15 +59,8 @@ const StepperHorizontal = ({ steps, activeStep, setActiveStep }) => {
           activeStep={activeStep}
           alternativeLabel
         >
-          {steps.map((label, index) => (
-            <Step
-              key={label}
-              onClick={() => {
-                if (newOrderUIData.btnNextStepEnabled) {
-                  goToNthTab(index)
-                }
-              }}
-            >
+          {steps.map((label) => (
+            <Step key={label}>
               <StepLabel>{label}</StepLabel>
             </Step>
           ))}

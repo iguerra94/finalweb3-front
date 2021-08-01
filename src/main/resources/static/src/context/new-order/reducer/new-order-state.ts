@@ -19,7 +19,13 @@ export interface BasicData {
 
 interface TruckData {
   dominio: string
-  cisternaList: Cisterna[]
+  cisternas?: {
+    cisterna1: number
+    cisterna2: number
+    cisterna3: number
+    cisterna4: number
+  }
+  cisternaList?: Cisterna[]
   chofer: Chofer
 }
 
@@ -46,15 +52,19 @@ export interface NewOrderUIData {
 export const initialNewOrderState: NewOrderState = {
   basicData: {
     numeroOrden: '',
-    fechaPrevistaCarga: moment()
-      .add('3', 'minutes')
-      .format(moment.HTML5_FMT.DATETIME_LOCAL_SECONDS),
-    tiempoAlmacenaje: 1,
-    preset: 500
+    fechaPrevistaCarga: moment().format(moment.HTML5_FMT.DATE),
+    tiempoAlmacenaje: 0,
+    preset: 0
   },
   truckData: {
     dominio: '',
-    cisternaList: [{ capacidad: 0 }, { capacidad: 0 }],
+    cisternas: {
+      cisterna1: 0,
+      cisterna2: 0,
+      cisterna3: 0,
+      cisterna4: 0
+    },
+    cisternaList: [{ capacidad: 0 }],
     chofer: { nombre: '', apellido: '', dni: 0, telefono: '' }
   },
   clientData: { nombre: '', apellido: '', dni: 0, telefono: '', email: '' },
