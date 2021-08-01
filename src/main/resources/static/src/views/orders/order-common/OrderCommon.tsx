@@ -41,14 +41,12 @@ export const OrderAction = ({
     estado: number,
     masaAcumulada: number
   ) => {
-    if (estado !== 2) {
+    if (estado !== 2 || masaAcumulada === 0) {
       orderStateActionClickHandlerMap[estado](numeroOrden, dispatch)
       return
     }
     if (masaAcumulada > 0) {
       displayLoadInfoModal(id, numeroOrden, dispatch)
-    } else {
-      orderStateActionClickHandlerMap[estado](id, numeroOrden, dispatch)
     }
   }
 

@@ -7,7 +7,7 @@ import { useNewOrder } from 'src/context/new-order/NewOrderContext'
 import { ActionType } from 'src/context/new-order/reducer/new-order-actions'
 import { useUI } from 'src/context/ui/UIContext'
 import { ActionType as UIActionType } from 'src/context/ui/reducer/ui-actions'
-import moment from 'moment'
+import { formatDate } from 'src/utils/function-utils'
 
 const CreatingNewOrder = React.lazy(
   () => import('src/components/modal-body/creating-new-order/CreatingNewOrder')
@@ -50,9 +50,7 @@ const NewOrderDetailData = ({ classes }) => {
               </Typography>
               <Typography className={classes.itemDetailText}>
                 <strong>Fecha prevista de carga: </strong>
-                {moment(state.basicData?.fechaPrevistaCarga || '').format(
-                  'DD-MM-YYYY'
-                )}
+                {formatDate(state.basicData!.fechaPrevistaCarga)}
               </Typography>
               <Typography className={classes.itemDetailText}>
                 <strong>Tiempo de almacenaje: </strong>
@@ -76,7 +74,7 @@ const NewOrderDetailData = ({ classes }) => {
                 <strong>Dominio: </strong>
                 {state.truckData?.dominio}
               </Typography>
-              {state.truckData?.cisternaList.map((cisterna, index) => (
+              {state.truckData?.cisternaList!.map((cisterna, index) => (
                 <Typography key={index} className={classes.itemDetailText}>
                   <strong>Cisterna #{index + 1}: </strong>
                   {cisterna.capacidad}L

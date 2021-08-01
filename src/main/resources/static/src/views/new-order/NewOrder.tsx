@@ -5,6 +5,8 @@ import StepperHorizontal from 'src/components/stepper-horizontal/StepperHorizont
 import ArrowBackIcon from '@material-ui/icons/ArrowBack'
 import useStyles from './NewOrderStyles'
 import React from 'react'
+import { useNewOrder } from 'src/context/new-order/NewOrderContext'
+import { ActionType } from 'src/context/new-order/reducer/new-order-actions'
 
 const NewOrderBasicData = React.lazy(
   () => import('src/views/new-order/new-order-basic-data/NewOrderBasicData')
@@ -29,10 +31,17 @@ const NewOrder: React.FC = () => {
 
   const props = { classes }
 
+  const { dispatch } = useNewOrder()
+
   const handlePrev = () => {
     setActiveStep((prevActiveStep) =>
       prevActiveStep > 0 ? prevActiveStep - 1 : prevActiveStep
     )
+
+    dispatch({
+      type: ActionType.UpdateBtnCreateOrderClickHandler,
+      payload: { btnCreateOrderClickHandler: undefined }
+    })
   }
 
   const steps = [

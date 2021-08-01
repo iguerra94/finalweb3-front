@@ -11,8 +11,12 @@ import useStyles from './LoadPumpPasswordInputStyles'
 import orderService from 'src/service/orderService'
 import { useEffect, useState } from 'react'
 import CircularProgress from '@material-ui/core/CircularProgress'
-import Orden from 'src/model/Orden'
 import FormControl from '@material-ui/core/FormControl'
+import PumpOrderData from 'src/model/dto/PumpOrderData'
+import { useHistory } from 'react-router-dom'
+import { ROUTES } from 'src/config/router/routes'
+import { useOrdersLoad } from 'src/context/orders-load/OrdersLoad'
+import { ActionType as OrdersLoadActionType } from 'src/context/orders-load/reducer/orders-load-actions'
 
 const LoadPumpPasswordInput = () => {
   const classes = useStyles()
@@ -20,7 +24,9 @@ const LoadPumpPasswordInput = () => {
     useState<boolean>(false)
   const [password, setPassword] = useState<string>('')
 
-  const [passwordError, setPasswordError] = useState('')
+  const [error, setError] = useState('')
+
+  const history = useHistory()
 
   const {
     state: {
@@ -29,38 +35,60 @@ const LoadPumpPasswordInput = () => {
     dispatch
   } = useUI()
 
+  const { state: ordersLoadState, dispatch: ordersLoadDispatch } =
+    useOrdersLoad()
+
   useEffect(() => {
     validateData()
   }, [])
 
   const validateData = () => {
-    setPasswordError(
-      !passwordValid(password) ? 'Debe contener 5 caracteres' : ''
-    )
+    setError(!passwordValid(password) ? 'Debe contener 5 caracteres' : '')
   }
 
   const handleClose = () => {
     dispatch({ type: ActionType.CloseModal })
   }
 
-  const checkIfPasswordIsValid = async () => {
+  const beginLoadingPump = async () => {
     try {
       setIsValidatingPassword(true)
 
-      const order: Orden = await orderService.getOrderById(
-        modalDynamicData.idOrden
-      )
+      const current_timestamp = new Date()
+      current_timestamp.setHours(current_timestamp.getHours())
+      const fecha = current_timestamp.toISOString()
 
-      if (order.password !== password) {
-        throw new Error('La password ingresada no coincide con la de la orden')
+      const pumpOrderData: PumpOrderData = {
+        fecha,
+        idOrden: modalDynamicData.numeroOrden,
+        masaAcumulada: 200,
+        password,
+        temperatura: 30
       }
+
+      await orderService.updatePump(pumpOrderData)
 
       setTimeout(() => {
         setIsValidatingPassword(false)
 
+        ordersLoadDispatch({
+          type: OrdersLoadActionType.UpdateOrdersLoadList,
+          payload: [
+            ...ordersLoadState.orders,
+            { idOrden: modalDynamicData.numeroOrden, password }
+          ]
+        })
+
+        dispatch({
+          type: ActionType.SetLoading,
+          payload: { loadingData: true }
+        })
+
         dispatch({
           type: ActionType.CloseModal
         })
+
+        history.replace(ROUTES.PrivateRoutes.OrderList.pathUrl())
 
         dispatch({
           type: ActionType.OpenSnackbar,
@@ -80,7 +108,7 @@ const LoadPumpPasswordInput = () => {
       setTimeout(() => {
         setIsValidatingPassword(false)
 
-        setPasswordError(e.message)
+        setError(e.response.data.message)
       }, 500)
     }
   }
@@ -102,7 +130,7 @@ const LoadPumpPasswordInput = () => {
               variant="outlined"
               value={password}
               onChange={(e) => {
-                setPasswordError(
+                setError(
                   !passwordValid(e.target.value)
                     ? 'Debe contener 5 caracteres'
                     : ''
@@ -110,15 +138,15 @@ const LoadPumpPasswordInput = () => {
                 setPassword(e.target.value)
               }}
               onBlur={(e) => {
-                setPasswordError(
+                setError(
                   !passwordValid(e.target.value)
                     ? 'Debe contener 5 caracteres'
                     : ''
                 )
                 setPassword(e.target.value)
               }}
-              error={passwordError.length > 0}
-              helperText={passwordError}
+              error={error.length > 0}
+              helperText={error}
             />
           </FormControl>
         </form>
@@ -129,11 +157,11 @@ const LoadPumpPasswordInput = () => {
           onClick={(e) => {
             e.stopPropagation()
 
-            checkIfPasswordIsValid()
+            beginLoadingPump()
           }}
           variant="contained"
           color="primary"
-          disabled={passwordError.length > 0 || isValidatingPassword}
+          disabled={error.length > 0 || isValidatingPassword}
         >
           {isValidatingPassword ? (
             <CircularProgress size={14} style={{ position: 'absolute' }} />

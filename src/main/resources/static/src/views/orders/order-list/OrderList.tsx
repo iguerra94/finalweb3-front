@@ -51,8 +51,6 @@ const OrderList: React.FC = () => {
   const classes = useStyles()
   const [loading, setLoading] = useState(true)
   const [data, setData] = useState<any[]>([])
-  const [ordersInStateTwo, setOrdersInStateTwo] = useState<Orden[]>([])
-  const [checking, setChecking] = useState<boolean>(true)
 
   const {
     state: { loadingData },
@@ -65,28 +63,13 @@ const OrderList: React.FC = () => {
 
   useEffect(() => {
     if (loadingData) {
-      getOrders(true)
+      getOrders(false)
     }
   }, [loadingData])
 
-  useEffect(() => {
-    if (ordersInStateTwo.length > 0) {
-      const intervalId = setInterval(() => {
-        setChecking(true)
-        console.log(ordersInStateTwo)
-
-        setOrdersInStateTwo([])
-        // getOrders(false)
-      }, 2000)
-
-      return () => {
-        clearInterval(intervalId)
-      }
-    }
-  }, [ordersInStateTwo, checking])
-
   const getOrders = async (showLoadingState: boolean) => {
     try {
+      setLoading(true)
       const results: Orden[] = await orderService.getOrders()
 
       const _data = results.map((orden) =>
@@ -99,12 +82,6 @@ const OrderList: React.FC = () => {
       )
 
       setData(_data)
-
-      setOrdersInStateTwo([
-        ...results.filter(
-          ({ estado, masaAcumulada }) => estado === 2 && masaAcumulada > 0
-        )
-      ])
     } catch (e) {
       console.log(e)
     } finally {
@@ -116,6 +93,12 @@ const OrderList: React.FC = () => {
           })
           setLoading(false)
         }, 500)
+      } else {
+        dispatch({
+          type: ActionType.SetLoading,
+          payload: { loadingData: false }
+        })
+        setLoading(false)
       }
     }
   }
@@ -127,7 +110,7 @@ const OrderList: React.FC = () => {
       </Box>
       <Box className={classes.sectionContainer}>
         <Paper className={classes.tableRoot}>
-          {loading || loadingData ? (
+          {loading ? (
             <Loading size={24} className={classes.loadingSm} />
           ) : (
             <TableContainer className={classes.tableContainer}>

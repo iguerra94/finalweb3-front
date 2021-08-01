@@ -1,8 +1,8 @@
 interface PumpOrderData {
   idOrden: string
-  temperatura: number
-  masaAcumulada: number
-  fecha: string
+  temperatura?: number
+  masaAcumulada?: number
+  fecha?: string
   password: string
 }
 

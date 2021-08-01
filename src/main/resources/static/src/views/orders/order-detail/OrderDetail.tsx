@@ -13,8 +13,8 @@ import { useEffect, useState } from 'react'
 import orderService from 'src/service/orderService'
 import Orden from 'src/model/Orden'
 import Loading from 'src/components/loading/Loading'
-import moment from 'moment'
 import { createDataDetailView } from '../order-common/OrderCommon'
+import { formatDate } from 'src/utils/function-utils'
 
 const OrderDetail: React.FC = () => {
   const [loading, setLoading] = useState(true)
@@ -123,7 +123,7 @@ const OrderDetail: React.FC = () => {
                   <strong style={{ marginRight: '8px' }}>
                     Fecha prevista de carga:
                   </strong>
-                  {moment(orden?.fechaPrevistaCarga || '').format('DD-MM-YYYY')}
+                  {formatDate(orden!.fechaPrevistaCarga)}
                 </Typography>
               )}
               {loading ? (
@@ -149,7 +149,7 @@ const OrderDetail: React.FC = () => {
                       <strong style={{ marginRight: '8px' }}>
                         Producto cargado:{' '}
                       </strong>
-                      {orden?.masaAcumulada || ''}
+                      {orden?.masaAcumulada || ''}L
                     </Typography>
                   ) : null}
                 </>

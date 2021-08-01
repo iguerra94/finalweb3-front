@@ -50,7 +50,6 @@ const displayInitialWeighingModal = (
 }
 
 const displayLoadPumpModal = (
-  idOrden: string,
   numeroOrden: string,
   dispatch: React.Dispatch<any>
 ) => {
@@ -59,7 +58,7 @@ const displayLoadPumpModal = (
     payload: {
       modalBody: LoadPumpPasswordInput,
       modalTitle: `Orden #${numeroOrden}`,
-      modalDynamicData: { idOrden, numeroOrden }
+      modalDynamicData: { numeroOrden }
     }
   })
 }
@@ -88,4 +87,14 @@ export const orderStateActionClickHandlerMap = {
   2: displayLoadPumpModal,
   3: displayFinalWeighingModal,
   4: displayConciliationModal
+}
+
+export const formatDate = (date: any) => {
+  const datePart = date.split('T')[0]
+
+  const day = datePart.split('-')[2]
+  const month = datePart.split('-')[1]
+  const year = datePart.split('-')[0]
+
+  return `${day}-${month}-${year}`
 }

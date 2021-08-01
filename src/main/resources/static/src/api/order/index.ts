@@ -5,7 +5,8 @@ import WeighingData from 'src/model/dto/WeighingData'
 import {
   API_URL_ORDER,
   API_URL_ORDER_FINAL_WEIGHING,
-  API_URL_ORDER_INITIAL_WEIGHING
+  API_URL_ORDER_INITIAL_WEIGHING,
+  API_URL_ORDER_LOAD_PUMP
 } from './routes'
 
 const getOrders = (): Promise<any> => Axios.get(API_URL_ORDER())
@@ -21,7 +22,7 @@ const updateInitialWeighing = (data: WeighingData): Promise<any> =>
 
 // actualizar surtidor
 const updatePump = (data: PumpOrderData): Promise<any> =>
-  Axios.put(API_URL_ORDER_INITIAL_WEIGHING, data)
+  Axios.put(API_URL_ORDER_LOAD_PUMP, data)
 
 // Pesaje final
 const updateFinalWeighing = (data: WeighingData): Promise<any> =>

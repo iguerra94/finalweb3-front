@@ -19,7 +19,13 @@ export interface BasicData {
 
 interface TruckData {
   dominio: string
-  cisternaList: Cisterna[]
+  cisternas?: {
+    cisterna1: number
+    cisterna2: number
+    cisterna3: number
+    cisterna4: number
+  }
+  cisternaList?: Cisterna[]
   chofer: Chofer
 }
 
@@ -52,7 +58,13 @@ export const initialNewOrderState: NewOrderState = {
   },
   truckData: {
     dominio: '',
-    cisternaList: [{ capacidad: 0 }, { capacidad: 0 }],
+    cisternas: {
+      cisterna1: 0,
+      cisterna2: 0,
+      cisterna3: 0,
+      cisterna4: 0
+    },
+    cisternaList: [{ capacidad: 0 }],
     chofer: { nombre: '', apellido: '', dni: 0, telefono: '' }
   },
   clientData: { nombre: '', apellido: '', dni: 0, telefono: '', email: '' },

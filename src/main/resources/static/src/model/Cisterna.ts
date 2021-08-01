@@ -1,6 +1,6 @@
 interface Cisterna {
   id?: number
-  capacidad: number
+  capacidad: any
 }
 
 export default Cisterna
