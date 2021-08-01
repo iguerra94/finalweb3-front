@@ -12,6 +12,7 @@ const useStyles = makeStyles(() =>
     },
     sectionTitle: {
       display: 'flex',
+      justifyContent: 'space-between',
       alignItems: 'center',
       padding: '0 2rem',
       height: '90px'

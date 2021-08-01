@@ -7,6 +7,8 @@ import useStyles from './NewOrderStyles'
 import React from 'react'
 import { useNewOrder } from 'src/context/new-order/NewOrderContext'
 import { ActionType } from 'src/context/new-order/reducer/new-order-actions'
+import UserInfo from 'src/components/user-info/UserInfo'
+import { useAuth } from 'src/context/auth/AuthContext'
 
 const NewOrderBasicData = React.lazy(
   () => import('src/views/new-order/new-order-basic-data/NewOrderBasicData')
@@ -33,6 +35,10 @@ const NewOrder: React.FC = () => {
 
   const { dispatch } = useNewOrder()
 
+  const {
+    state: { user }
+  } = useAuth()
+
   const handlePrev = () => {
     setActiveStep((prevActiveStep) =>
       prevActiveStep > 0 ? prevActiveStep - 1 : prevActiveStep
@@ -55,16 +61,20 @@ const NewOrder: React.FC = () => {
   return (
     <Box className={classes.container}>
       <Box component={'h2'} className={classes.sectionTitle}>
-        {activeStep > 0 ? (
-          <IconButton
-            aria-label="arrow-back"
-            classes={{ root: classes.arrowBackRoot }}
-            onClick={handlePrev}
-          >
-            <ArrowBackIcon />
-          </IconButton>
-        ) : null}
-        <span>Nueva orden</span>
+        <Box>
+          {activeStep > 0 ? (
+            <IconButton
+              aria-label="arrow-back"
+              classes={{ root: classes.arrowBackRoot }}
+              onClick={handlePrev}
+            >
+              <ArrowBackIcon />
+            </IconButton>
+          ) : null}
+          <span>Nueva orden</span>
+        </Box>
+
+        <UserInfo data={user} />
       </Box>
       <Suspense
         fallback={

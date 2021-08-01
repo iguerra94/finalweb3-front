@@ -66,7 +66,7 @@ const MainWrapper: React.FC = ({ children }) => {
       idOrden,
       masaAcumulada: valorPrevioMasaAcumulada + 200,
       password,
-      temperatura: 30
+      temperatura: 45
     }
 
     return pumpOrderData

@@ -105,6 +105,7 @@ const LoadInfo = () => {
               <span>Ultima caudal:</span>
               <span>XXXX</span>
             </Box>
+            {}
             <Box display="flex" justifyContent="flex-end" marginTop="1rem">
               <Typography
                 style={{

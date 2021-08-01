@@ -15,6 +15,8 @@ import Loading from 'src/components/loading/Loading'
 import { useUI } from 'src/context/ui/UIContext'
 import { ActionType } from 'src/context/ui/reducer/ui-actions'
 import { createDataListView } from 'src/views/orders/order-common/OrderCommon'
+import { useAuth } from 'src/context/auth/AuthContext'
+import UserInfo from 'src/components/user-info/UserInfo'
 
 interface Column {
   id: 'numeroOrden' | 'estado' | 'accion'
@@ -57,6 +59,10 @@ const OrderList: React.FC = () => {
     dispatch
   } = useUI()
 
+  const {
+    state: { user }
+  } = useAuth()
+
   useEffect(() => {
     getOrders(true)
   }, [])
@@ -77,7 +83,8 @@ const OrderList: React.FC = () => {
           orden.id,
           orden.numeroOrden,
           orden.estado,
-          orden.masaAcumulada
+          orden.masaAcumulada,
+          orden.envioMail
         )
       )
 
@@ -107,6 +114,7 @@ const OrderList: React.FC = () => {
     <Box className={classes.container}>
       <Box component={'h2'} className={classes.sectionTitle}>
         <span>Ordenes</span>
+        <UserInfo data={user} />
       </Box>
       <Box className={classes.sectionContainer}>
         <Paper className={classes.tableRoot}>

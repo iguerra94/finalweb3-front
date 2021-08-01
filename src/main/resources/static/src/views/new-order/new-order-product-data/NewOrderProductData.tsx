@@ -81,14 +81,14 @@ const NewOrderProductData = ({ classes }) => {
     setError(
       'precio',
       !priceValid(productData.precio)
-        ? 'Debe ser un valor entre $200 y $10000'
+        ? 'Debe ser un valor entre $1 y $10000'
         : ''
     )
   }
 
   const nameValid = (value) => value.length > 0
   const descriptionValid = (value) => value.length > 0
-  const priceValid = (value) => value && value >= 200 && value <= 10000
+  const priceValid = (value) => value && value >= 1 && value <= 10000
 
   return (
     <Box className={classes.sectionContainer} justifyContent="space-between">
@@ -157,7 +157,7 @@ const NewOrderProductData = ({ classes }) => {
               setError(
                 'precio',
                 !priceValid(e.target.value)
-                  ? 'Debe ser un valor entre $200 y $10000'
+                  ? 'Debe ser un valor entre $1 y $10000'
                   : ''
               )
               updateProductData('precio', e.target.value, { type: 'number' })
@@ -167,7 +167,7 @@ const NewOrderProductData = ({ classes }) => {
               setError(
                 'precio',
                 !priceValid(e.target.value)
-                  ? 'Debe ser un valor entre $200 y $10000'
+                  ? 'Debe ser un valor entre $1 y $10000'
                   : ''
               )
             }}

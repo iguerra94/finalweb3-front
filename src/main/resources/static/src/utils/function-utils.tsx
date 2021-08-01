@@ -13,6 +13,12 @@ const LoadPumpPasswordInput = React.lazy(
 const LoadInfo = React.lazy(
   () => import('src/components/modal-body/load-info/LoadInfo')
 )
+const UpdateOrderEmailSend = React.lazy(
+  () =>
+    import(
+      'src/components/modal-body/update-order-email-send/UpdateOrderEmailSend'
+    )
+)
 const FinalWeighing = React.lazy(
   () => import('src/components/modal-body/final-weighing/FinalWeighing')
 )
@@ -70,7 +76,7 @@ const displayLoadPumpModal = (
 }
 
 export const displayLoadInfoModal = (
-  idOrden: string,
+  idOrden: number,
   numeroOrden: string,
   dispatch: React.Dispatch<any>
 ) => {
@@ -80,6 +86,21 @@ export const displayLoadInfoModal = (
       modalBody: LoadInfo,
       modalTitle: `Orden #${numeroOrden}`,
       modalDynamicData: { idOrden, numeroOrden }
+    }
+  })
+}
+
+export const displayUpdateOrderEmailSendModal = (
+  idOrden: number,
+  numeroOrden: string,
+  dispatch: React.Dispatch<any>
+) => {
+  dispatch({
+    type: ActionType.OpenModal,
+    payload: {
+      modalBody: UpdateOrderEmailSend,
+      modalTitle: `Orden #${numeroOrden}`,
+      modalDynamicData: { idOrden }
     }
   })
 }
@@ -106,7 +127,7 @@ const displayConciliationModal = (
     type: ActionType.OpenModal,
     payload: {
       modalBody: OrderConciliation,
-      modalTitle: `Orden #${numeroOrden}`,
+      modalTitle: `Conciliación - Orden #${numeroOrden}`,
       modalDynamicData: { numeroOrden }
     }
   })

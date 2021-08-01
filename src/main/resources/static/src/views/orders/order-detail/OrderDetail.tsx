@@ -15,6 +15,8 @@ import Orden from 'src/model/Orden'
 import Loading from 'src/components/loading/Loading'
 import { createDataDetailView } from '../order-common/OrderCommon'
 import { formatDate } from 'src/utils/function-utils'
+import UserInfo from 'src/components/user-info/UserInfo'
+import { useAuth } from 'src/context/auth/AuthContext'
 
 const OrderDetail: React.FC = () => {
   const [loading, setLoading] = useState(true)
@@ -23,6 +25,10 @@ const OrderDetail: React.FC = () => {
 
   const classes = useStyles()
   const params = useParams()
+
+  const {
+    state: { user }
+  } = useAuth()
 
   const history = useHistory()
 
@@ -76,6 +82,7 @@ const OrderDetail: React.FC = () => {
             </Box>
           )}
         </Breadcrumbs>
+        <UserInfo data={user} />
       </Box>
       <Box className={classes.sectionContainer}>
         {loading ? (

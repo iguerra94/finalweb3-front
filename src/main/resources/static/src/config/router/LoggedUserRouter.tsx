@@ -51,6 +51,8 @@ const LoggedUserRouter = () => {
               exact
               path={ROUTE.pathUrl()}
               component={ROUTE.component}
+              hasRenderCondition={ROUTE.hasRenderCondition}
+              renderCondition={ROUTE.renderCondition}
             />
           )
         )}

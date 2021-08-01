@@ -3,15 +3,30 @@ import { useAuth } from 'src/context/auth/AuthContext'
 
 import { ROUTES } from './routes'
 
-const PrivateRoute = ({ component: Component, ...rest }) => {
+const PrivateRoute = ({
+  component: Component,
+  hasRenderCondition,
+  renderCondition,
+  ...rest
+}) => {
   const { state } = useAuth()
-  const { userIsLogged } = state
+  const { user, userIsLogged } = state
   const location = useLocation()
 
   return (
     <Route {...rest}>
       {userIsLogged ? (
-        RenderComponent(Component)
+        !hasRenderCondition ||
+        (hasRenderCondition && renderCondition(user.roles![0].name)) ? (
+          RenderComponent(Component)
+        ) : (
+          <Redirect
+            to={{
+              pathname: ROUTES.PrivateRoutes.OrderList.pathUrl(),
+              state: { from: location }
+            }}
+          />
+        )
       ) : (
         <Redirect
           to={{ pathname: ROUTES.Login.pathUrl, state: { from: location } }}

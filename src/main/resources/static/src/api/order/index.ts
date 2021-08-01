@@ -1,9 +1,11 @@
 import Axios from 'axios'
 import NewOrderCreationData from 'src/model/dto/NewOrderCreationData'
 import PumpOrderData from 'src/model/dto/PumpOrderData'
+import UpdateEmailSendData from 'src/model/dto/UpdateEmailSendData'
 import WeighingData from 'src/model/dto/WeighingData'
 import {
   API_URL_ORDER,
+  API_URL_ORDER_EMAIL_SEND,
   API_URL_ORDER_FINAL_WEIGHING,
   API_URL_ORDER_INITIAL_WEIGHING,
   API_URL_ORDER_LOAD_PUMP
@@ -28,13 +30,18 @@ const updatePump = (data: PumpOrderData): Promise<any> =>
 const updateFinalWeighing = (data: WeighingData): Promise<any> =>
   Axios.put(API_URL_ORDER_FINAL_WEIGHING, data)
 
+// Envio Mail
+const updateEmailSend = (data: UpdateEmailSendData): Promise<any> =>
+  Axios.put(API_URL_ORDER_EMAIL_SEND, data)
+
 const orderMethods = {
   getOrders,
   getOrderById,
   addOrder,
   updateInitialWeighing,
   updatePump,
-  updateFinalWeighing
+  updateFinalWeighing,
+  updateEmailSend
 }
 
 export default orderMethods

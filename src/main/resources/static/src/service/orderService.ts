@@ -1,6 +1,7 @@
 import api from 'src/api/api'
 import NewOrderCreationData from 'src/model/dto/NewOrderCreationData'
 import PumpOrderData from 'src/model/dto/PumpOrderData'
+import UpdateEmailSendData from 'src/model/dto/UpdateEmailSendData'
 import WeighingData from 'src/model/dto/WeighingData'
 
 class OrderService {
@@ -26,6 +27,10 @@ class OrderService {
 
   public async updateFinalWeighing(data: WeighingData) {
     return api.order.updateFinalWeighing(data).then((result) => result.data)
+  }
+
+  public async updateEmailSend(data: UpdateEmailSendData) {
+    return api.order.updateEmailSend(data).then((result) => result.data)
   }
 }
 

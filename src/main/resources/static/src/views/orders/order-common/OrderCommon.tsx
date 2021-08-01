@@ -1,10 +1,11 @@
-import { Box, Button } from '@material-ui/core'
+import { Box, Button, Typography } from '@material-ui/core'
 import { ROUTES } from 'src/config/router/routes'
 import { Link } from 'react-router-dom'
 
 import { useUI } from 'src/context/ui/UIContext'
 import {
   displayLoadInfoModal,
+  displayUpdateOrderEmailSendModal,
   orderStateActionClickHandlerMap,
   orderStateActionLabelMap,
   orderStateColorMap
@@ -27,13 +28,23 @@ export const OrderState = ({ estado }) => {
   )
 }
 
+interface OrderActionProps {
+  id: number
+  numeroOrden: string
+  estado: number
+  masaAcumulada: number
+  showActionButton: boolean
+  envioMail?: number
+}
+
 export const OrderAction = ({
   id,
   numeroOrden,
   estado,
   masaAcumulada,
-  showActionButton
-}) => {
+  showActionButton,
+  envioMail
+}: OrderActionProps) => {
   const classes = useStyles()
   const { dispatch } = useUI()
 
@@ -50,6 +61,10 @@ export const OrderAction = ({
     }
   }
 
+  const actualizarEnvioMail = () => {
+    displayUpdateOrderEmailSendModal(id, numeroOrden, dispatch)
+  }
+
   return (
     <Box display="flex" justifyContent="space-between">
       <Box display="flex" alignItems="center">
@@ -64,7 +79,7 @@ export const OrderAction = ({
             ? 'Ver información de carga'
             : orderStateActionLabelMap[estado]}
         </Button>
-        {/* {estado === 2 ? (
+        {estado === 2 && envioMail === 1 ? (
           <Box display="flex" alignItems="center">
             <Typography
               style={{
@@ -84,15 +99,16 @@ export const OrderAction = ({
                 color: 'white',
                 textTransform: 'none'
               }}
+              onClick={actualizarEnvioMail}
             >
               Aceptar
             </Button>
           </Box>
-        ) : null} */}
+        ) : null}
       </Box>
 
       {showActionButton ? (
-        <Link to={ROUTES.PrivateRoutes.OrderDetail.pathUrl(id)}>
+        <Link to={ROUTES.PrivateRoutes.OrderDetail.pathUrl(id.toString())}>
           <Button style={{ textTransform: 'none' }}>Detalle</Button>
         </Link>
       ) : null}
@@ -104,7 +120,8 @@ export function createDataListView(
   id: number,
   numeroOrden: string,
   estado: number,
-  masaAcumulada: number
+  masaAcumulada: number,
+  envioMail: number
 ) {
   return {
     numeroOrden,
@@ -115,6 +132,7 @@ export function createDataListView(
         numeroOrden={numeroOrden}
         estado={estado}
         masaAcumulada={masaAcumulada}
+        envioMail={envioMail}
         showActionButton={true}
       />
     )
