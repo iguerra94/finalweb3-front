@@ -7,21 +7,45 @@ import { ActionType } from 'src/context/ui/reducer/ui-actions'
 import useStyles from './OrderConciliationStyles'
 import { useEffect } from 'react'
 import Box from '@material-ui/core/Box'
+import { useState } from 'react'
+import Conciliacion from 'src/model/Conciliacion'
+import conciliationService from 'src/service/conciliationService'
+import Loading from 'src/components/loading/Loading'
 
 const OrderConciliation = () => {
+  const [isLoading, setLoading] = useState(true)
+  const [conciliation, setConciliation] = useState<Conciliacion>()
+
   const classes = useStyles()
 
   const {
-    // state: {
-    //   modalData: { modalDynamicData }
-    // },
+    state: {
+      modalData: { modalDynamicData }
+    },
     dispatch
   } = useUI()
 
-  useEffect(() => {}, [])
+  useEffect(() => {
+    getConciliationByOrderNumber()
+  }, [])
 
   const handleClose = () => {
     dispatch({ type: ActionType.CloseModal })
+  }
+
+  const getConciliationByOrderNumber = async () => {
+    try {
+      const result: Conciliacion =
+        await conciliationService.getConciliationByOrderNumber(
+          modalDynamicData.numeroOrden
+        )
+
+      setConciliation(result)
+    } finally {
+      setTimeout(() => {
+        setLoading(false)
+      }, 500)
+    }
   }
 
   return (
@@ -38,7 +62,14 @@ const OrderConciliation = () => {
           paddingRight="14px"
         >
           <span>Pesaje inicial:</span>
-          <span>XXXX</span>
+          {isLoading ? (
+            <Loading
+              size={12}
+              style={{ display: 'flex', alignItems: 'center' }}
+            />
+          ) : (
+            <span>{conciliation?.pesajeInicial} kg.</span>
+          )}
         </Box>
         <Box
           display="flex"
@@ -50,7 +81,14 @@ const OrderConciliation = () => {
           paddingRight="14px"
         >
           <span>Pesaje final:</span>
-          <span>XXXX</span>
+          {isLoading ? (
+            <Loading
+              size={12}
+              style={{ display: 'flex', alignItems: 'center' }}
+            />
+          ) : (
+            <span>{conciliation?.pesajeFinal} kg.</span>
+          )}
         </Box>
         <Box
           display="flex"
@@ -63,8 +101,16 @@ const OrderConciliation = () => {
           paddingRight="14px"
         >
           <span>Producto cargado:</span>
-          <span>XXXX</span>
+          {isLoading ? (
+            <Loading
+              size={12}
+              style={{ display: 'flex', alignItems: 'center' }}
+            />
+          ) : (
+            <span>{conciliation?.productoCargado}L</span>
+          )}
         </Box>
+
         <Box
           display="flex"
           alignItems="center"
@@ -75,7 +121,14 @@ const OrderConciliation = () => {
           paddingRight="14px"
         >
           Neto por balanza:
-          <span>XXXX</span>
+          {isLoading ? (
+            <Loading
+              size={12}
+              style={{ display: 'flex', alignItems: 'center' }}
+            />
+          ) : (
+            <span>{conciliation?.netoBalanza} kg.</span>
+          )}
         </Box>
         <Box
           display="flex"
@@ -88,7 +141,14 @@ const OrderConciliation = () => {
           paddingRight="14px"
         >
           Diferencia entre balanza y caudalímetro:
-          <span>XXXX</span>
+          {isLoading ? (
+            <Loading
+              size={12}
+              style={{ display: 'flex', alignItems: 'center' }}
+            />
+          ) : (
+            <span>{conciliation?.diferenciaBalanzaCaudalimetro} kg.</span>
+          )}
         </Box>
         <Box
           display="flex"
@@ -100,7 +160,14 @@ const OrderConciliation = () => {
           paddingRight="14px"
         >
           Promedio de densidad del producto:
-          <span>XXXX</span>
+          {isLoading ? (
+            <Loading
+              size={12}
+              style={{ display: 'flex', alignItems: 'center' }}
+            />
+          ) : (
+            <span>{conciliation?.densidad.toFixed(2)} kg/cm3</span>
+          )}
         </Box>
         <Box
           display="flex"
@@ -113,7 +180,14 @@ const OrderConciliation = () => {
           paddingRight="14px"
         >
           Promedio de temperatura del producto:
-          <span>XXXX</span>
+          {isLoading ? (
+            <Loading
+              size={12}
+              style={{ display: 'flex', alignItems: 'center' }}
+            />
+          ) : (
+            <span>{conciliation?.temperatura.toFixed(2)} C</span>
+          )}
         </Box>
         <Box
           display="flex"
@@ -125,7 +199,14 @@ const OrderConciliation = () => {
           paddingRight="14px"
         >
           Promedio de Caudal:
-          <span>XXXX</span>
+          {isLoading ? (
+            <Loading
+              size={12}
+              style={{ display: 'flex', alignItems: 'center' }}
+            />
+          ) : (
+            <span>{conciliation?.caudal.toFixed(2)}</span>
+          )}
         </Box>
       </DialogContent>
       <DialogActions style={{ padding: '8px 24px' }}>

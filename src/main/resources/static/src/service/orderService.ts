@@ -23,6 +23,10 @@ class OrderService {
   public async updatePump(data: PumpOrderData) {
     return api.order.updatePump(data).then((result) => result.data)
   }
+
+  public async updateFinalWeighing(data: WeighingData) {
+    return api.order.updateFinalWeighing(data).then((result) => result.data)
+  }
 }
 
 export default new OrderService()

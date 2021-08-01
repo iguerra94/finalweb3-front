@@ -13,6 +13,12 @@ const LoadPumpPasswordInput = React.lazy(
 const LoadInfo = React.lazy(
   () => import('src/components/modal-body/load-info/LoadInfo')
 )
+const FinalWeighing = React.lazy(
+  () => import('src/components/modal-body/final-weighing/FinalWeighing')
+)
+const OrderConciliation = React.lazy(
+  () => import('src/components/modal-body/order-conciliation/OrderConciliation')
+)
 
 export const digestMessage = async (message) => {
   const encoder = new TextEncoder()
@@ -78,9 +84,33 @@ export const displayLoadInfoModal = (
   })
 }
 
-const displayFinalWeighingModal = () => {}
+const displayFinalWeighingModal = (
+  numeroOrden: string,
+  dispatch: React.Dispatch<any>
+) => {
+  dispatch({
+    type: ActionType.OpenModal,
+    payload: {
+      modalBody: FinalWeighing,
+      modalTitle: `Orden #${numeroOrden}`,
+      modalDynamicData: { numeroOrden }
+    }
+  })
+}
 
-const displayConciliationModal = () => {}
+const displayConciliationModal = (
+  numeroOrden: string,
+  dispatch: React.Dispatch<any>
+) => {
+  dispatch({
+    type: ActionType.OpenModal,
+    payload: {
+      modalBody: OrderConciliation,
+      modalTitle: `Orden #${numeroOrden}`,
+      modalDynamicData: { numeroOrden }
+    }
+  })
+}
 
 export const orderStateActionClickHandlerMap = {
   1: displayInitialWeighingModal,

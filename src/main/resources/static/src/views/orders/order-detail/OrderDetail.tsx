@@ -163,8 +163,7 @@ const OrderDetail: React.FC = () => {
                       <strong style={{ marginRight: '8px' }}>
                         Pesaje final:{' '}
                       </strong>
-
-                      {orden?.pesajeFinal || ''}
+                      {orden?.pesajeFinal || ''} kg.
                     </Typography>
                   ) : null}
                 </>
