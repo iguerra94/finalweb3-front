@@ -94,6 +94,8 @@ public class Orden implements Serializable {
 
     private Date fechaPrevistaCarga;
 
+    private Date fechaInicioCarga;
+
     private String password;
 
     private double pesajeInicial;
@@ -238,6 +240,14 @@ public class Orden implements Serializable {
 
     public void setFechaPrevistaCarga(Date fechaPrevistaCarga) {
         this.fechaPrevistaCarga = fechaPrevistaCarga;
+    }
+
+    public Date getFechaInicioCarga() {
+      return fechaInicioCarga;
+    }
+
+    public void setFechaInicioCarga(Date fechaInicioCarga) {
+        this.fechaInicioCarga = fechaInicioCarga;
     }
 
     public String getPassword() {

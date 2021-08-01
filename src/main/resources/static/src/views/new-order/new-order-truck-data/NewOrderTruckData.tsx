@@ -52,6 +52,11 @@ const NewOrderTruckData = ({ classes }) => {
     if (truckData) {
       setData(truckData)
 
+      const cantCisternas = Object.values(truckData.cisternas!).filter(
+        (value) => value !== 0
+      ).length
+      setCantidadCisternas(cantCisternas !== 0 ? cantCisternas : 1)
+
       validateData()
     } else {
       dispatch({

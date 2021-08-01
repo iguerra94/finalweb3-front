@@ -17,6 +17,7 @@ import { useHistory } from 'react-router-dom'
 import { ROUTES } from 'src/config/router/routes'
 import { useOrdersLoad } from 'src/context/orders-load/OrdersLoad'
 import { ActionType as OrdersLoadActionType } from 'src/context/orders-load/reducer/orders-load-actions'
+import orderUtils from 'src/utils/order-utils'
 
 const LoadPumpPasswordInput = () => {
   const classes = useStyles()
@@ -58,12 +59,14 @@ const LoadPumpPasswordInput = () => {
       current_timestamp.setHours(current_timestamp.getHours())
       const fecha = current_timestamp.toISOString()
 
+      const randomValues = orderUtils.generateRandomValues()
+
       const pumpOrderData: PumpOrderData = {
         fecha,
         idOrden: modalDynamicData.numeroOrden,
-        masaAcumulada: 200,
+        masaAcumulada: randomValues.masaAcumulada,
         password,
-        temperatura: 30
+        temperatura: randomValues.temperatura
       }
 
       await orderService.updatePump(pumpOrderData)

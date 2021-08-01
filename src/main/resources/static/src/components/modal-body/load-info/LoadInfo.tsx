@@ -7,13 +7,20 @@ import Tooltip from '@material-ui/core/Tooltip'
 import { HelpOutline } from '@material-ui/icons'
 
 import useStyles from './LoadInfoStyles'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import Box from '@material-ui/core/Box'
 import Typography from '@material-ui/core/Typography'
-import { Theme, LinearProgress } from '@material-ui/core'
-import { withStyles, createStyles } from '@material-ui/styles'
+import {
+  withStyles,
+  createStyles,
+  LinearProgress,
+  LinearProgressProps
+} from '@material-ui/core'
+import Orden from 'src/model/Orden'
+import orderService from 'src/service/orderService'
+import moment from 'moment'
 
-const BorderLinearProgress = withStyles((theme: Theme) =>
+const BorderLinearProgress = withStyles(() =>
   createStyles({
     root: {
       height: 10,
@@ -29,17 +36,83 @@ const BorderLinearProgress = withStyles((theme: Theme) =>
   })
 )(LinearProgress)
 
+function LinearProgressWithLabel(
+  props: LinearProgressProps & { value: number }
+) {
+  return (
+    <Box display="flex" alignItems="center">
+      <Box width="100%" mr={1}>
+        <BorderLinearProgress variant="determinate" {...props} />
+      </Box>
+      <Box minWidth={35}>
+        <Typography variant="body2" color="textSecondary">{`${Math.round(
+          props.value
+        )}%`}</Typography>
+      </Box>
+    </Box>
+  )
+}
+
 const LoadInfo = () => {
+  const [order, setOrder] = useState<Orden>()
+  const [orderLoadProgress, setOrderLoadProgress] = useState(0)
+  const [orderLoadTime, setOrderLoadTime] = useState<string>()
+  const [orderETA, setOrderETA] = useState<number>()
+  const [reloadData, setReloadData] = useState(true)
+
   const classes = useStyles()
 
   const {
-    // state: {
-    //   modalData: { modalDynamicData }
-    // },
+    state: {
+      modalData: { modalDynamicData }
+    },
     dispatch
   } = useUI()
 
-  useEffect(() => {}, [])
+  useEffect(() => {
+    if (reloadData) {
+      const intervalId = setInterval(() => {
+        getOrderById()
+      }, 1000)
+
+      return () => {
+        clearInterval(intervalId)
+      }
+    }
+  }, [reloadData])
+
+  const getOrderById = async () => {
+    try {
+      const result: Orden = await orderService.getOrderById(
+        modalDynamicData.idOrden
+      )
+
+      setOrder(result)
+
+      const preset = result.preset
+      const capacidadCisternas = result.camion.cisternaList!.reduce(
+        (previous, current) => previous + current.capacidad!,
+        0
+      )
+
+      const capacidad = Math.min(preset, capacidadCisternas)
+
+      const progress = (result.masaAcumulada / capacidad) * 100
+      setOrderLoadProgress(progress)
+      const diff = moment(result.fechaUltimoAlmacenamiento).diff(
+        result.fechaInicioCarga
+      )
+
+      setOrderLoadTime(moment.utc(diff).format('HH:mm'))
+
+      // (capacidad - masaAcumulada) (kg) / caudal (kg/h) => h
+      const eta = Math.round((capacidad - result.masaAcumulada) / result.caudal)
+      console.log('eta', eta)
+      setOrderETA(eta)
+
+      setReloadData(result.estado === 2)
+    } catch (e) {}
+  }
 
   const handleClose = () => {
     dispatch({ type: ActionType.CloseModal })
@@ -66,7 +139,7 @@ const LoadInfo = () => {
               paddingRight="14px"
             >
               <span>Ultima masa acumulada: </span>
-              <span>XXXX</span>
+              <span>{order?.masaAcumulada.toFixed(2) || 0} kg.</span>
             </Box>
             <Box
               display="flex"
@@ -78,7 +151,7 @@ const LoadInfo = () => {
               paddingRight="14px"
             >
               <span>Ultima densidad del producto:</span>
-              <span>XXXX</span>
+              <span>{order?.densidad.toFixed(2) || 0} kg/m3</span>
             </Box>
             <Box
               display="flex"
@@ -91,7 +164,7 @@ const LoadInfo = () => {
               paddingRight="14px"
             >
               <span>Ultima temperatura del producto:</span>
-              <span>XXXX</span>
+              <span>{order?.temperatura.toFixed(2) || 0} °C</span>
             </Box>
             <Box
               display="flex"
@@ -102,33 +175,34 @@ const LoadInfo = () => {
               paddingLeft="14px"
               paddingRight="14px"
             >
-              <span>Ultima caudal:</span>
-              <span>XXXX</span>
+              <span>Ultimo caudal:</span>
+              <span>{order?.caudal.toFixed(2) || 0} kg/h</span>
             </Box>
-            {}
-            <Box display="flex" justifyContent="flex-end" marginTop="1rem">
-              <Typography
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  color: '#F44336',
-                  margin: '0 1rem 0 2rem'
-                }}
-              >
-                Temperatura alta
-              </Typography>
+            {order?.estado === 2 && order?.envioMail === 1 ? (
+              <Box display="flex" justifyContent="flex-end" marginTop="1rem">
+                <Typography
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    color: '#F44336',
+                    margin: '0 1rem 0 2rem'
+                  }}
+                >
+                  Temperatura alta
+                </Typography>
 
-              <Button
-                variant="contained"
-                style={{
-                  backgroundColor: '#F44336',
-                  color: 'white',
-                  textTransform: 'none'
-                }}
-              >
-                Aceptar
-              </Button>
-            </Box>
+                <Button
+                  variant="contained"
+                  style={{
+                    backgroundColor: '#F44336',
+                    color: 'white',
+                    textTransform: 'none'
+                  }}
+                >
+                  Aceptar
+                </Button>
+              </Box>
+            ) : null}
           </Box>
           <Box display="flex" flexDirection="column" flex="2">
             <Box
@@ -141,7 +215,7 @@ const LoadInfo = () => {
               paddingRight="14px"
             >
               <span style={{ lineHeight: '32px' }}>Tiempo de carga: </span>
-              <span style={{ lineHeight: '32px' }}>XXXX</span>
+              <span style={{ lineHeight: '32px' }}>{orderLoadTime}</span>
             </Box>
             <Box
               display="flex"
@@ -160,14 +234,17 @@ const LoadInfo = () => {
                   ETA:
                 </span>
               </Box>
-              <span style={{ lineHeight: '32px' }}>XXXX</span>
+              <span style={{ lineHeight: '32px' }}>{orderETA}</span>
             </Box>
           </Box>
         </Box>
         <Box fontWeight="600" marginTop="3rem" marginBottom="8px">
           <span>Progreso de carga</span>
         </Box>
-        <BorderLinearProgress variant="determinate" value={50} />
+        <LinearProgressWithLabel
+          variant="determinate"
+          value={orderLoadProgress}
+        />
       </DialogContent>
       <DialogActions style={{ padding: '8px 24px' }}>
         <Button onClick={handleClose} variant="contained" color="primary">

@@ -10,6 +10,7 @@ import { useUI } from 'src/context/ui/UIContext'
 import PumpOrderData from 'src/model/dto/PumpOrderData'
 import Orden from 'src/model/Orden'
 import orderService from 'src/service/orderService'
+import orderUtils from 'src/utils/order-utils'
 
 const MainWrapper: React.FC = ({ children }) => {
   const [checking, setChecking] = useState<boolean>(true)
@@ -55,18 +56,31 @@ const MainWrapper: React.FC = ({ children }) => {
   const generatePumpOrderData = (
     idOrden: string,
     password: string,
-    valorPrevioMasaAcumulada: number
+    valorPrevioMasaAcumulada: number,
+    capacidad: number
   ) => {
     const current_timestamp = new Date()
     current_timestamp.setHours(current_timestamp.getHours())
     const fecha = current_timestamp.toISOString()
 
+    const randomValues = orderUtils.generateRandomValues()
+
+    let masaAcumulada
+    const nuevaMasaAcumulada =
+      valorPrevioMasaAcumulada + randomValues.masaAcumulada
+
+    if (nuevaMasaAcumulada < capacidad) {
+      masaAcumulada = nuevaMasaAcumulada
+    } else {
+      masaAcumulada = capacidad + 1
+    }
+
     const pumpOrderData: PumpOrderData = {
       fecha,
       idOrden,
-      masaAcumulada: valorPrevioMasaAcumulada + 200,
+      masaAcumulada,
       password,
-      temperatura: 45
+      temperatura: randomValues.temperatura
     }
 
     return pumpOrderData
@@ -74,11 +88,12 @@ const MainWrapper: React.FC = ({ children }) => {
 
   const updateOrdersPump = async () => {
     await Promise.all(
-      orders.map(async ({ idOrden, password }) => {
+      orders.map(async ({ idOrden, password, capacidad }) => {
         const data = generatePumpOrderData(
           idOrden,
           password,
-          masasAcumuladas[idOrden] ? masasAcumuladas[idOrden] : 0
+          masasAcumuladas[idOrden] ? masasAcumuladas[idOrden] : 0,
+          capacidad ? capacidad : 0
         )
 
         const orden: Orden = await orderService.updatePump(data)
@@ -118,10 +133,21 @@ const MainWrapper: React.FC = ({ children }) => {
             .filter(
               ({ estado, masaAcumulada }) => estado === 2 && masaAcumulada > 0
             )
-            .map((orden) => ({
-              idOrden: orden.numeroOrden,
-              password: orden.password
-            }))
+            .map((orden) => {
+              const preset = orden.preset
+              const capacidadCisternas = orden.camion.cisternaList!.reduce(
+                (previous, current) => previous + current.capacidad!,
+                0
+              )
+
+              const capacidad = Math.min(preset, capacidadCisternas)
+
+              return {
+                idOrden: orden.numeroOrden,
+                password: orden.password,
+                capacidad
+              }
+            })
         ]
       })
 
@@ -129,10 +155,20 @@ const MainWrapper: React.FC = ({ children }) => {
         ({ estado, masaAcumulada }) => estado === 2 && masaAcumulada > 0
       )
 
-      const mapaMasasAcumuladas = ordenesCargandoSurtidor.map((orden) => [
-        orden.numeroOrden,
-        orden.masaAcumulada
-      ])
+      const mapaMasasAcumuladas = ordenesCargandoSurtidor.map((orden) => {
+        const preset = orden.preset
+        const capacidadCisternas = orden.camion.cisternaList!.reduce(
+          (previous, current) => previous + current.capacidad!,
+          0
+        )
+
+        const capacidad = Math.min(preset, capacidadCisternas)
+
+        return [
+          orden.numeroOrden,
+          { masaAcumulada: orden.masaAcumulada, capacidad }
+        ]
+      })
 
       setMasasAcumuladas(Object.fromEntries(mapaMasasAcumuladas))
     } catch (e) {

@@ -3,6 +3,7 @@ interface PumpOrderData {
   temperatura?: number
   masaAcumulada?: number
   fecha?: string
+  capacidad?: number
   password: string
 }
 

@@ -63,6 +63,7 @@ public class OrdenBusiness implements IOrdenBusiness {
             orden.setDensidad(0);
             Date fechaGen = java.util.Calendar.getInstance().getTime();
             orden.setFechaGeneracionOrden(fechaGen);
+            orden.setFechaInicioCarga(null);
             orden.setFechaUltimoAlmacenamiento(null);
             orden.setMasaAcumulada(0);
             orden.setTemperatura(0);
@@ -126,6 +127,13 @@ public class OrdenBusiness implements IOrdenBusiness {
             Date dateSurtidor = inputDF.parse(ordenSurtidorDTO.getFecha());
             double caudal = (ordenSurtidorDTO.getMasaAcumulada() - orden.getMasaAcumulada()) / 1;
             double densidad = ordenSurtidorDTO.getMasaAcumulada() / capacidad;
+
+            // Setear fechaInicioCarga
+            if (orden.getFechaInicioCarga() == null) {
+              Date fechaInicioCarga = java.util.Calendar.getInstance().getTime();
+              orden.setFechaInicioCarga(fechaInicioCarga);
+            }
+
             OrdenDetalle ordenDetalle = new OrdenDetalle(ordenSurtidorDTO.getMasaAcumulada(), densidad, ordenSurtidorDTO.getTemperatura(), caudal, orden.getId(), dateSurtidor);
             if (caudal > 0 && orden.getMasaAcumulada() < ordenSurtidorDTO.getMasaAcumulada() && ordenSurtidorDTO.getMasaAcumulada() > 0) {
                 if (orden.getFechaUltimoAlmacenamiento() != null) {

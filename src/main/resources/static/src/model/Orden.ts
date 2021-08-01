@@ -15,6 +15,7 @@ interface Orden {
   temperatura: number
   caudal: number
   fechaUltimoAlmacenamiento?: Date
+  fechaInicioCarga?: Date
   preset: number
   estado: number
   fechaGeneracionOrden: Date
