@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.security.SecureRandom;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -30,6 +31,8 @@ public class OrdenBusiness implements IOrdenBusiness {
     private OrdenDetalleBusiness ordenDetalleBusiness;
     @Autowired
     private ConciliacionBusiness conciliacionBusiness;
+    @Autowired
+    private CisternaBusiness cisternaBusiness;
     @Autowired
     private MailService mailService;
 
@@ -71,7 +74,16 @@ public class OrdenBusiness implements IOrdenBusiness {
             orden.setPesajeInicial(0);
             orden.setFechaPesaje(null);
             orden.setEnvioMail(0);
-
+            List<Cisterna> cisternas = new ArrayList<Cisterna>();
+            for (int i = 0; i < orden.getCamion().getCisternaList().size(); i++) {
+                Cisterna cisterna = cisternaBusiness.findCisternaByCapacidad(orden.getCamion().getCisternaList().get(i).getCapacidad());
+                if (cisterna != null) {
+                    cisternas.add(cisterna);
+                } else {
+                    cisternas.add(orden.getCamion().getCisternaList().get(i));
+                }
+            }
+            orden.getCamion().setCisternaList(cisternas);
             return ordenDAO.save(orden);
         } catch (Exception e) {
             throw new BusinessException(e);
@@ -130,8 +142,8 @@ public class OrdenBusiness implements IOrdenBusiness {
 
             // Setear fechaInicioCarga
             if (orden.getFechaInicioCarga() == null) {
-              Date fechaInicioCarga = java.util.Calendar.getInstance().getTime();
-              orden.setFechaInicioCarga(fechaInicioCarga);
+                Date fechaInicioCarga = java.util.Calendar.getInstance().getTime();
+                orden.setFechaInicioCarga(fechaInicioCarga);
             }
 
             OrdenDetalle ordenDetalle = new OrdenDetalle(ordenSurtidorDTO.getMasaAcumulada(), densidad, ordenSurtidorDTO.getTemperatura(), caudal, orden.getId(), dateSurtidor);
@@ -179,7 +191,7 @@ public class OrdenBusiness implements IOrdenBusiness {
         if (orden == null) {
             throw new NotFoundException("No se encontro ningun producto cn el filtro especificado.");
         }
-        if(ordenSurtidorDTO.getTemperatura() >= 40 && orden.getEnvioMail() == 0){
+        if (ordenSurtidorDTO.getTemperatura() >= 40 && orden.getEnvioMail() == 0) {
             String titulo = "Alerta de temperatura ALTA.";
             String mensaje = "La temperatura del surtidor superó los 40 grados. Temperatura actual: " + ordenSurtidorDTO.getTemperatura();
             mailService.enviarCorreo(orden.getCliente().getEmail(), titulo, mensaje);
@@ -357,8 +369,8 @@ public class OrdenBusiness implements IOrdenBusiness {
         return conciliacion;
     }
 
-    public double calcularPromedio(double valor, double cantidad){
-        return (valor/cantidad);
+    public double calcularPromedio(double valor, double cantidad) {
+        return (valor / cantidad);
     }
 
     @Override
@@ -371,7 +383,7 @@ public class OrdenBusiness implements IOrdenBusiness {
             log.error(e.getMessage(), e);
             throw new BusinessException(e);
         }
-        if(orden == null){
+        if (orden == null) {
             throw new NotFoundException("Orden no encontrada con id " + actualizacionMailDTO.getIdOrden());
         }
         return orden;

@@ -1,5 +1,5 @@
 # Borrar carpeta target
-rm -rf target 
+rm -rvf target
 
 # Buildear el proyecto
 mvn -Dmaven.test.skip=true -Dbuild=jar package

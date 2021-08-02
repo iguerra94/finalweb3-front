@@ -32,6 +32,10 @@ class OrderService {
   public async updateEmailSend(data: UpdateEmailSendData) {
     return api.order.updateEmailSend(data).then((result) => result.data)
   }
+
+  public async closeOrder(data: PumpOrderData) {
+    return api.order.closeOrder(data).then((result) => result.data)
+  }
 }
 
 export default new OrderService()

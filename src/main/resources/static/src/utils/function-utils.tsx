@@ -19,6 +19,12 @@ const UpdateOrderEmailSend = React.lazy(
       'src/components/modal-body/update-order-email-send/UpdateOrderEmailSend'
     )
 )
+const CloseOrderQuestionWarning = React.lazy(
+  () =>
+    import(
+      'src/components/modal-body/close-order-question-warning/CloseOrderQuestionWarning'
+    )
+)
 const FinalWeighing = React.lazy(
   () => import('src/components/modal-body/final-weighing/FinalWeighing')
 )
@@ -101,6 +107,21 @@ export const displayUpdateOrderEmailSendModal = (
       modalBody: UpdateOrderEmailSend,
       modalTitle: `Orden #${numeroOrden}`,
       modalDynamicData: { idOrden }
+    }
+  })
+}
+
+export const displayCloseOrderQuestionWarningModal = (
+  idOrden: number,
+  numeroOrden: string,
+  dispatch: React.Dispatch<any>
+) => {
+  dispatch({
+    type: ActionType.OpenModal,
+    payload: {
+      modalBody: CloseOrderQuestionWarning,
+      modalTitle: `Orden #${numeroOrden}`,
+      modalDynamicData: { idOrden, numeroOrden }
     }
   })
 }

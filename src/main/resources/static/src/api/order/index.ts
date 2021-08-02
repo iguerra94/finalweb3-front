@@ -5,6 +5,7 @@ import UpdateEmailSendData from 'src/model/dto/UpdateEmailSendData'
 import WeighingData from 'src/model/dto/WeighingData'
 import {
   API_URL_ORDER,
+  API_URL_ORDER_CLOSE,
   API_URL_ORDER_EMAIL_SEND,
   API_URL_ORDER_FINAL_WEIGHING,
   API_URL_ORDER_INITIAL_WEIGHING,
@@ -34,6 +35,10 @@ const updateFinalWeighing = (data: WeighingData): Promise<any> =>
 const updateEmailSend = (data: UpdateEmailSendData): Promise<any> =>
   Axios.put(API_URL_ORDER_EMAIL_SEND, data)
 
+// Cerrar orden por numero de orden
+const closeOrder = (data: PumpOrderData): Promise<any> =>
+  Axios.put(API_URL_ORDER_CLOSE, data)
+
 const orderMethods = {
   getOrders,
   getOrderById,
@@ -41,7 +46,8 @@ const orderMethods = {
   updateInitialWeighing,
   updatePump,
   updateFinalWeighing,
-  updateEmailSend
+  updateEmailSend,
+  closeOrder
 }
 
 export default orderMethods

@@ -66,6 +66,7 @@ const LoadPumpPasswordInput = () => {
         idOrden: modalDynamicData.numeroOrden,
         masaAcumulada: randomValues.masaAcumulada,
         password,
+        // temperatura: 30
         temperatura: randomValues.temperatura
       }
 
