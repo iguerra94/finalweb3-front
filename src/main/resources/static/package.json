@@ -25,6 +25,7 @@
     "start:windows": "BROWSER='chrome' react-scripts start",
     "start:mac": "BROWSER='google chrome' react-scripts start",
     "start:linux": "BROWSER='google-chrome-stable' react-scripts start",
+    "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"

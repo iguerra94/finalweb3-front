@@ -1,9 +1,9 @@
-version: "3"
+version: '3'
 services:
   mysql:
     container_name: mysql-db
     build: ./docker-config/mysql
-    image: "mysql:latest"
+    image: 'mysql:latest'
     environment:
       - MYSQL_ROOT_PASSWORD=root
       - MYSQL_PASSWORD=root
@@ -14,7 +14,7 @@ services:
     networks:
       iw3_2020:
         ipv4_address: 172.19.0.2
-  iw3:
+  iw3_back:
     #    image: matiasslpknt1/iw3:0.0.6.RELEASE
     build: ./docker-config/spring
     expose:
@@ -23,14 +23,28 @@ services:
       - 8081:8081
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/testw3?createDatabaseIfNotExist=true&verifyServerCertificate=false&useSSL=true
-      SPRING_DATASOURCE_USERNAME: "root"
-      SPRING_DATASOURCE_PASSWORD: "root"
+      SPRING_DATASOURCE_USERNAME: 'root'
+      SPRING_DATASOURCE_PASSWORD: 'root'
     depends_on:
       - mysql
     restart: always
     networks:
       iw3_2020:
         ipv4_address: 172.19.0.3
+  iw3_front:
+    build:
+      context: ./src/main/resources/static
+      dockerfile: Dockerfile
+    expose:
+      - 3000
+    ports:
+      - 3000:3000
+    depends_on:
+      - iw3_back
+    restart: always
+    networks:
+      iw3_2020:
+        ipv4_address: 172.19.0.4
 networks:
   iw3_2020:
     driver: bridge
