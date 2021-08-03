@@ -16,7 +16,9 @@ services:
         ipv4_address: 172.19.0.2
   iw3_back:
     #    image: matiasslpknt1/iw3:0.0.6.RELEASE
-    build: ./docker-config/spring
+    build:
+      context: .
+      dockerfile: SpringDockerfile
     expose:
       - 8081
     ports:

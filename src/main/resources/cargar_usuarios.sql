@@ -1,12 +1,3 @@
-/* Ingresar al contenedor de docker donde esta corriendo mysql */ 
-
-/* Ejecutar mysql desde la consola */
--- Password mysql: root
-mysql -uroot -proot;
-
-/* Usar tabla testw3 */
-use testw3;
-
 /* Alta de usuarios */
 
 /* Usuario admin */
